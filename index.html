@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لعبة القيمة المنزلية التفاعلية - Place Value Game</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0f4c81;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --bg: #f0fdf4;
+    }
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%);
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+    .header-box {
+      background: linear-gradient(135deg, #0f4c81 0%, #1e3a8a 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 0 0 24px 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .game-card {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+    .player-card {
+      background: #ffffff;
+      border: 3px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 16px;
+      transition: all 0.3s;
+    }
+    .player-card.active-player {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+      background: #fffdf5;
+    }
+    .digit-slot {
+      width: 55px;
+      height: 70px;
+      border: 3px dashed #94a3b8;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 800;
+      background: #f8fafc;
+      color: #1e293b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .digit-slot.placeable {
+      border-color: var(--accent);
+      background: #fef3c7;
+      animation: pulse 1.2s infinite;
+    }
+    .digit-slot.filled {
+      border-style: solid;
+      border-color: var(--primary);
+      background: #eff6ff;
+      color: var(--primary);
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .place-label {
+      font-size: 0.75rem;
+      color: #64748b;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 4px;
+    }
+    .deck-card {
+      width: 110px;
+      height: 150px;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      font-weight: 900;
+      box-shadow: 0 10px 20px rgba(217, 119, 6, 0.3);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s;
+    }
+    .deck-card:hover {
+      transform: translateY(-5px);
+    }
+    .badge-place {
+      background-color: #e2e8f0;
+      color: #334155;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+    .winner-banner {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      animation: popIn 0.5s ease;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header-box text-center mb-4">
+    <h2 class="fw-black mb-1"><i class="fa-solid fa-dice me-2"></i>لعبة القيمة المنزلية التفاعلية</h2>
+    <p class="mb-0 fs-6 text-light opacity-90">كون أكبر مجموع ممكن بالاستفادة من استراتيجيات القيمة المنزلية (المئات، العشرات، الآحاد)</p>
+  </div>
+
+  <div class="container">
+
+    <!-- Controls Panel -->
+    <div class="game-card mb-4">
+      <div class="row align-items-center g-3">
+        <div class="col-md-4">
+          <label class="form-label fw-bold"><i class="fa-solid fa-users me-1 text-primary"></i> عدد اللاعبين / الفرق:</label>
+          <select id="playerCountSelect" class="form-select form-select-lg fw-bold" onchange="resetGame()">
+            <option value="2">لاعبان (2 Players)</option>
+            <option value="3">3 لاعبين (3 Players)</option>
+            <option value="4" selected>4 لاعبين / فرق (4 Players)</option>
+          </select>
+        </div>
+        <div class="col-md-5">
+          <div class="form-check form-switch mt-md-4">
+            <input class="form-check-input" type="checkbox" id="allowSabotage" checked>
+            <label class="form-check-label fw-bold" for="allowSabotage">
+              سماح الوضع في لوح المنافسين <small class="text-muted">(قاعدة التحدي من الكتاب)</small>
+            </label>
+          </div>
+        </div>
+        <div class="col-md-3 text-end">
+          <button class="btn btn-outline-danger btn-lg w-100 fw-bold" onclick="resetGame()">
+            <i class="fa-solid fa-rotate-right me-1"></i> لعبة جديدة
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Game Area -->
+    <div class="row g-4">
+
+      <!-- Left Column: Card Deck & Controls -->
+      <div class="col-lg-4">
+        <div class="game-card text-center h-100 d-flex flex-column justify-content-center align-items-center">
+          <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-layer-group me-2"></i>كومة البطاقات</h5>
+          
+          <div class="deck-card mb-3" id="deckButton" onclick="drawCard()">
+            <span id="drawnCardValue">؟</span>
+          </div>
+
+          <p class="fw-bold text-muted mb-2">البطاقات المتبقية: <span id="cardsLeft" class="badge bg-primary fs-6">50</span> / 50</p>
+          <button id="drawBtn" class="btn btn-warning btn-lg w-100 fw-bold shadow-sm" onclick="drawCard()">
+            <i class="fa-solid fa-hand-pointer me-1"></i> اسحب بطاقة!
+          </button>
+
+          <div id="statusInstruction" class="alert alert-info w-100 mt-3 mb-0 fw-bold text-start" style="font-size: 0.9rem;">
+            <i class="fa-solid fa-circle-info me-1"></i> اضغط على "اسحب بطاقة" للبدء، ثم اختر المربع المناسب لوضع الرقم.
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Player Boards -->
+      <div class="col-lg-8">
+        <div id="winnerDisplay"></div>
+
+        <div class="row g-3" id="playersContainer">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Strategy Discussion Questions -->
+    <div class="game-card mt-4 bg-light">
+      <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-brain me-2 text-warning"></i>أسئلة تفكير واستراتيجية للمناقشة مع الطلاب أثناء اللعب:</h5>
+      <div class="row g-2">
+        <div class="col-md-6">
+          <div class="p-2 border rounded bg-white"><i class="fa-solid fa-lightbulb text-warning me-2"></i><strong>إذا ظهر الرقم (8 أو 9):</strong> في أي منزلة تفضل وضعه للحصول على أكبر مجموع ولماذا؟</div>
+        </div>
+        <div class="col-md-6">
+          <div class="p-2 border rounded bg-white"><i class="fa-solid fa-lightbulb text-warning me-2"></i><strong>إذا ظهر الرقم (0 أو 1):</strong> أين هو المكان الأنسب لوضعه لتقليل الأثر على المجموع؟</div>
+        </div>
+        <div class="col-md-6">
+          <div class="p-2 border rounded bg-white"><i class="fa-solid fa-shield-halved text-danger me-2"></i><strong>استراتيجية الدفاع:</strong> إذا سمح القانون بالوضع في لوح زميلك وظهر لك الرقم (0)، أين تضعه لدى منافسك؟</div>
+        </div>
+        <div class="col-md-6">
+          <div class="p-2 border rounded bg-white"><i class="fa-solid fa-calculator text-success me-2"></i><strong>التقدير الذهني:</strong> قبل المجمع النهائي، من نتوقع أن يكون الفائز بناءً على منزلة المئات؟</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let players = [];
+    let deck = [];
+    let currentDrawnCard = null;
+    let activePlayerIndex = 0;
+    let isGameOver = false;
+
+    function initDeck() {
+      deck = [];
+      // 50 cards total: 5 of each number 0-9
+      for (let num = 0; num <= 9; num++) {
+        for (let c = 0; c < 5; c++) {
+          deck.push(num);
+        }
+      }
+      // Shuffle deck
+      deck.sort(() => Math.random() - 0.5);
+    }
+
+    function resetGame() {
+      const count = parseInt(document.getElementById('playerCountSelect').value);
+      players = [];
+      for (let i = 0; i < count; i++) {
+        players.push({
+          id: i,
+          name: `اللاعب / الفريق ${i + 1}`,
+          // slots: 6 total [num1_hundred, num1_ten, num1_unit, num2_hundred, num2_ten, num2_unit]
+          slots: [null, null, null, null, null, null]
+        });
+      }
+      initDeck();
+      currentDrawnCard = null;
+      activePlayerIndex = 0;
+      isGameOver = false;
+
+      document.getElementById('drawnCardValue').innerText = '؟';
+      document.getElementById('cardsLeft').innerText = deck.length;
+      document.getElementById('winnerDisplay').innerHTML = '';
+      document.getElementById('drawBtn').disabled = false;
+      document.getElementById('statusInstruction').innerHTML = '<i class="fa-solid fa-circle-info me-1"></i> دور <strong>' + players[activePlayerIndex].name + '</strong>. اضغط على "اسحب بطاقة".';
+
+      renderBoards();
+    }
+
+    function renderBoards() {
+      const container = document.getElementById('playersContainer');
+      container.innerHTML = '';
+
+      players.forEach((player, pIdx) => {
+        const isActive = (pIdx === activePlayerIndex && !isGameOver);
+        const allowSabotage = document.getElementById('allowSabotage').checked;
+        const canPlace = currentDrawnCard !== null && (isActive || allowSabotage) && !isGameOver;
+
+        let num1 = calculateNumber(player.slots.slice(0, 3));
+        let num2 = calculateNumber(player.slots.slice(3, 6));
+        let totalSum = (num1 !== null && num2 !== null) ? (num1 + num2) : '---';
+
+        let html = `
+          <div class="col-md-6">
+            <div class="player-card ${isActive ? 'active-player' : ''}">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="fw-bold mb-0 text-primary">
+                  <i class="fa-solid fa-user me-1"></i> ${player.name}
+                </h6>
+                ${isActive ? '<span class="badge bg-warning text-dark fw-bold"><i class="fa-solid fa-star me-1"></i>الدور الحالي</span>' : ''}
+              </div>
+
+              <!-- Board Formula: [ ] [ ] [ ] + [ ] [ ] [ ] -->
+              <div class="bg-light p-3 rounded-3 border">
+
+                <!-- Number 1 -->
+                <div class="d-flex justify-content-center gap-2 mb-2">
+                  ${renderSlot(pIdx, 0, player.slots[0], 'مئات', canPlace)}
+                  ${renderSlot(pIdx, 1, player.slots[1], 'عشرات', canPlace)}
+                  ${renderSlot(pIdx, 2, player.slots[2], 'آحاد', canPlace)}
+                </div>
+
+                <div class="text-center fw-black text-danger fs-4 my-1">+</div>
+
+                <!-- Number 2 -->
+                <div class="d-flex justify-content-center gap-2 mb-2">
+                  ${renderSlot(pIdx, 3, player.slots[3], 'مئات', canPlace)}
+                  ${renderSlot(pIdx, 4, player.slots[4], 'عشرات', canPlace)}
+                  ${renderSlot(pIdx, 5, player.slots[5], 'آحاد', canPlace)}
+                </div>
+
+                <hr class="my-2">
+
+                <!-- Result Sum -->
+                <div class="d-flex justify-content-between align-items-center mt-2 px-2">
+                  <span class="fw-bold text-muted">المجموع الكلي:</span>
+                  <span class="fw-black fs-4 text-success">${totalSum}</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        `;
+        container.innerHTML += html;
+      });
+    }
+
+    function renderSlot(playerIndex, slotIndex, value, label, canPlace) {
+      const isFilled = value !== null;
+      const isSelectable = canPlace && !isFilled;
+
+      return `
+        <div>
+          <div class="digit-slot ${isFilled ? 'filled' : ''} ${isSelectable ? 'placeable' : ''}"
+               onclick="${isSelectable ? `placeCard(${playerIndex}, ${slotIndex})` : ''}">
+            ${isFilled ? value : ''}
+          </div>
+          <div class="place-label">${label}</div>
+        </div>
+      `;
+    }
+
+    function drawCard() {
+      if (isGameOver) return;
+      if (currentDrawnCard !== null) {
+        alert('يجب وضع البطاقة الحالية في أحد المربعات أولاً!');
+        return;
+      }
+      if (deck.length === 0) {
+        alert('انتهت البطاقات!');
+        return;
+      }
+
+      currentDrawnCard = deck.pop();
+      document.getElementById('drawnCardValue').innerText = currentDrawnCard;
+      document.getElementById('cardsLeft').innerText = deck.length;
+
+      document.getElementById('statusInstruction').innerHTML = 
+        `<i class="fa-solid fa-hand-pointer text-warning me-1"></i> اختر المربع المضلل في اللوح لوضع الرقم <strong>(${currentDrawnCard})</strong>.`;
+
+      renderBoards();
+    }
+
+    function placeCard(playerIndex, slotIndex) {
+      if (currentDrawnCard === null || isGameOver) return;
+
+      players[playerIndex].slots[slotIndex] = currentDrawnCard;
+      currentDrawnCard = null;
+      document.getElementById('drawnCardValue').innerText = '؟';
+
+      // Check if all players boards are completely filled
+      checkGameOver();
+
+      if (!isGameOver) {
+        // Next player turn
+        activePlayerIndex = (activePlayerIndex + 1) % players.length;
+        document.getElementById('statusInstruction').innerHTML = 
+          `<i class="fa-solid fa-circle-info me-1"></i> أحسنت! انتقل الدور إلى <strong>${players[activePlayerIndex].name}</strong>. اضغط "اسحب بطاقة".`;
+      }
+
+      renderBoards();
+    }
+
+    function calculateNumber(slots) {
+      if (slots[0] === null || slots[1] === null || slots[2] === null) return null;
+      return slots[0] * 100 + slots[1] * 10 + slots[2];
+    }
+
+    function checkGameOver() {
+      let allFilled = true;
+      players.forEach(p => {
+        if (p.slots.includes(null)) allFilled = false;
+      });
+
+      if (allFilled) {
+        isGameOver = true;
+        document.getElementById('drawBtn').disabled = true;
+
+        let maxSum = -1;
+        let winners = [];
+
+        players.forEach(p => {
+          let sum = calculateNumber(p.slots.slice(0,3)) + calculateNumber(p.slots.slice(3,6));
+          if (sum > maxSum) {
+            maxSum = sum;
+            winners = [p.name];
+          } else if (sum === maxSum) {
+            winners.push(p.name);
+          }
+        });
+
+        const winnerText = winners.length > 1 ? `تعادل بين: ${winners.join(' و ')}` : `الفائز هو: ${winners[0]}!`;
+        document.getElementById('winnerDisplay').innerHTML = `
+          <div class="winner-banner mb-3">
+            <i class="fa-solid fa-trophy text-warning fa-2x mb-2 d-block"></i>
+            🎉 ${winnerText} 🎉
+            <div class="fs-5 mt-1">بأعلى مجموع قدره: ${maxSum}</div>
+          </div>
+        `;
+
+        document.getElementById('statusInstruction').className = "alert alert-success w-100 mt-3 mb-0 fw-bold";
+        document.getElementById('statusInstruction').innerHTML = `<i class="fa-solid fa-check-circle me-1"></i> اكتملت اللعبة! يمكنك البدء بلعبة جديدة الآن.`;
+      }
+    }
+
+    // Initialize game on load
+    window.onload = resetGame;
+  </script>
+</body>
+</html>
