@@ -68,9 +68,9 @@
         }
         .rods-frame {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             background: #dcdde1;
-            padding: 15px 25px;
+            padding: 15px;
             border-radius: 10px;
             border-bottom: 8px solid #718093;
             align-items: flex-end;
@@ -95,14 +95,14 @@
             position: relative;
         }
         .bead {
-            width: 24px;
+            width: 22px;
             height: 14px;
             border-radius: 7px;
             margin-bottom: 2px;
             box-shadow: inset 0 2px 0 rgba(255,255,255,0.5);
         }
         .rod-label {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             margin-top: 8px;
             font-weight: bold;
             color: #2f3640;
@@ -113,8 +113,8 @@
             margin-top: 6px;
         }
         .btn-bead {
-            width: 26px;
-            height: 26px;
+            width: 24px;
+            height: 24px;
             border: none;
             border-radius: 50%;
             font-weight: bold;
@@ -130,6 +130,8 @@
         .bead-c1 { background: #e74c3c; } /* الآحاد - أحمر */
         .bead-c2 { background: #e67e22; } /* العشرات - برتقالي */
         .bead-c3 { background: #f1c40f; } /* المئات - أصفر */
+        .bead-c4 { background: #3498db; } /* أحاد الألوف - أزرق */
+        .bead-c5 { background: #9b59b6; } /* عشرات الألوف - بنفسجي */
 
         .actions {
             margin-top: 30px;
@@ -208,16 +210,18 @@
 
     <script>
         const rodsData = [
+            { name: 'عشرات الألوف', val: 10000, colorClass: 'bead-c5' },
+            { name: 'أحاد الألوف', val: 1000, colorClass: 'bead-c4' },
             { name: 'المئات', val: 100, colorClass: 'bead-c3' },
             { name: 'العشرات', val: 10, colorClass: 'bead-c2' },
             { name: 'الآحاد', val: 1, colorClass: 'bead-c1' }
         ];
 
-        // 3 abacuses, each has 3 rods (initialized to 0 beads)
+        // 3 abacuses, each has 5 rods (initialized to 0 beads)
         let state = [
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0]
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
         ];
 
         function initGame() {
@@ -281,7 +285,7 @@
 
             for (let a = 0; a < 3; a++) {
                 let abacusVal = 0;
-                for (let r = 0; r < 3; r++) {
+                for (let r = 0; r < 5; r++) {
                     const count = state[a][r];
                     totalBeads += count;
                     abacusVal += count * rodsData[r].val;
@@ -313,9 +317,9 @@
 
         function resetGame() {
             state = [
-                [0, 0, 0],
-                [0, 0, 0],
-                [0, 0, 0]
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0]
             ];
             render();
         }
