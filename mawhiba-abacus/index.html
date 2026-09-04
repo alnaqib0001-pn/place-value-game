@@ -184,12 +184,12 @@
 </head>
 <body>
 
-    <h1>النشاط الثالث: ثلاثةُ عدّاداتٍ  </h1>
+    <h1>النشاط الثالث: ثلاثةُ عدّاداتٍ</h1>
     <p class="subtitle">استخدم قدراتك الذهنية لتمثيل الأعداد واكتشاف الخرزات المستعملة بدون حاسبة !</p>
 
     <div class="tabs-nav">
-        <button class="tab-btn active" onclick="switchTab(1000)">القسم الأول:  (تحدي ١,٠٠٠)</button>
-        <button class="tab-btn" onclick="switchTab(100000)">القسم الثاني:  (تحدي ١٠٠,٠٠٠)</button>
+        <button class="tab-btn active" onclick="switchTab(1000)">القسم الأول: (تحدي ١,٠٠٠)</button>
+        <button class="tab-btn" onclick="switchTab(100000)">القسم الثاني: (تحدي ١٠٠,٠٠٠)</button>
     </div>
 
     <div class="dashboard">
@@ -199,7 +199,7 @@
         </div>
         <div class="stat-card">
             <div class="label">الهدف المطلوب ذهنيًا</div>
-            <div class="value" id="targetDisplay" style="color: #2980b9;">1,000</div>
+            <div class="value" id="targetDisplay" style="color: #2980b9;">١,٠٠٠</div>
         </div>
     </div>
 
@@ -228,6 +228,9 @@
             { name: 'عشرات الألوف', val: 10000, colorClass: 'bead-c5' }
         ];
 
+        // مصفوفة تسمية العدادات بالألفاظ
+        const abacusTitles = ['العداد الأول', 'العداد الثاني', 'العداد الثالث'];
+
         let activeTarget = 1000;
         let state1000 = [[0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]];
         let state100000 = [[0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]];
@@ -248,7 +251,7 @@
 
                 const title = document.createElement('div');
                 title.className = 'abacus-title';
-                title.innerText = `العداد ${a + 1}`;
+                title.innerText = abacusTitles[a]; // التغيير هنا لتسمية العدادات لفظياً
 
                 const frame = document.createElement('div');
                 frame.className = 'rods-frame';
@@ -311,11 +314,11 @@
             if (targetVal === 1000) {
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 document.getElementById('tab-1000').classList.add('active');
-                document.getElementById('targetDisplay').innerText = '1,000';
+                document.getElementById('targetDisplay').innerText = '١,٠٠٠'; // تحويل الرقم للعربي
             } else {
                 document.querySelectorAll('.tab-btn')[1].classList.add('active');
                 document.getElementById('tab-100000').classList.add('active');
-                document.getElementById('targetDisplay').innerText = '100,000';
+                document.getElementById('targetDisplay').innerText = '١٠٠,٠٠٠'; // تحويل الرقم للعربي
             }
             document.getElementById('resultBanner').style.display = 'none';
             render();
@@ -362,7 +365,7 @@
 
             if (currentSum === target) {
                 banner.className = 'result-banner result-success';
-                banner.innerHTML = `🎉 إجابة صحيحة! المجموع الذهني يساوي ${target.toLocaleString('ar-SA')}<br>عدد الخرزات المستعملة في هذه المحاولة: ${totalBeads} خرزة.`;
+                banner.innerHTML = `🎉 إجابة صحيحة! المجموع الذهني يساوي ${target.toLocaleString('ar-SA')}<br>عدد الخرزات المستعملة في هذه المحاولة: ${totalBeads.toLocaleString('ar-SA')} خرزة.`;
             } else {
                 banner.className = 'result-banner result-fail';
                 banner.innerHTML = `❌ المجموع الحقيقي حالياً هو (${currentSum.toLocaleString('ar-SA')}) وليس (${target.toLocaleString('ar-SA')}).<br>راجع حساباتك الذهنية وحاول مرة أخرى!`;
