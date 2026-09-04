@@ -20,7 +20,6 @@
         h1 { color: var(--primary); margin-bottom: 5px; }
         p.subtitle { color: #7f8c8d; margin-top: 0; font-size: 1.1rem; }
 
-        /* Navigation Tabs */
         .tabs-nav {
             display: flex;
             justify-content: center;
@@ -185,10 +184,9 @@
 </head>
 <body>
 
-    <h1>النشاط الثالث: ثلاثةُ عدّاداتٍ  </h1>
-    <p class="subtitle">استخدم قدراتك الرياضية لتمثيل الأعداد واكتشاف عدد الخرزات المستعملة !</p>
+    <h1>النشاط الثالث: ثلاثةُ عدّاداتٍ (تحدي الحساب الذهني) 🧠</h1>
+    <p class="subtitle">استخدم قدراتك الذهنية لتمثيل الأعداد واكتشاف الخرزات المستعملة بدون حاسبة تلقائية!</p>
 
-    <!-- الأقسام / التبويبات -->
     <div class="tabs-nav">
         <button class="tab-btn active" onclick="switchTab(1000)">القسم الأول: 5 أعمدة (تحدي 1,000)</button>
         <button class="tab-btn" onclick="switchTab(100000)">القسم الثاني: 5 أعمدة (تحدي 100,000)</button>
@@ -207,12 +205,10 @@
 
     <div id="resultBanner" class="result-banner"></div>
 
-    <!-- محتوى قسم التحدي الأول: 1,000 -->
     <div id="tab-1000" class="tab-content active">
         <div class="abacuses-container" id="container-1000"></div>
     </div>
 
-    <!-- محتوى قسم التحدي الثاني: 100,000 -->
     <div id="tab-100000" class="tab-content">
         <div class="abacuses-container" id="container-100000"></div>
     </div>
@@ -223,15 +219,16 @@
     </div>
 
     <script>
+        // تم عكس مصفوفة المنازل لتبدأ بالآحاد في أقصى اليمين (حسب قراءة الاتجاه العربي)
         const rodsData = [
-            { name: 'عشرات الألوف', val: 10000, colorClass: 'bead-c5' },
-            { name: 'أحاد الألوف', val: 1000, colorClass: 'bead-c4' },
-            { name: 'المئات', val: 100, colorClass: 'bead-c3' },
+            { name: 'الآحاد', val: 1, colorClass: 'bead-c1' },
             { name: 'العشرات', val: 10, colorClass: 'bead-c2' },
-            { name: 'الآحاد', val: 1, colorClass: 'bead-c1' }
+            { name: 'المئات', val: 100, colorClass: 'bead-c3' },
+            { name: 'أحاد الألوف', val: 1000, colorClass: 'bead-c4' },
+            { name: 'عشرات الألوف', val: 10000, colorClass: 'bead-c5' }
         ];
 
-        let activeTarget = 1000; // 1000 or 100000
+        let activeTarget = 1000;
         let state1000 = [[0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]];
         let state100000 = [[0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]];
 
