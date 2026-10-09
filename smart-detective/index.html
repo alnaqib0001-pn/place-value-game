@@ -3,804 +3,870 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>المحقق الذكي | ما البيانات المفقودة؟</title>
 <style>
 :root{
-  --navy:#163456;
-  --blue:#2563eb;
-  --sky:#eaf4ff;
-  --gold:#fbbf24;
-  --green:#15803d;
-  --light:#f6f9fd;
-  --red:#dc2626;
+ --navy:#193756;--blue:#2069b6;
+ --green:#148255;--gold:#ffc545;
+ --bg:#f3f8ff;--line:#d9e5f2;
+ --text:#253f5b;--red:#cf3544;
 }
 *{box-sizing:border-box}
 body{
-  margin:0;
-  background:var(--light);
-  color:var(--navy);
-  font-family:Tahoma,Arial,sans-serif;
-  font-size:19px;
-  line-height:1.8;
+ margin:0;background:var(--bg);color:var(--text);
+ font:18px/1.85 Tahoma,Arial,sans-serif;
 }
-header{
-  background:linear-gradient(125deg,#12355c,#2563eb);
-  color:white;
-  padding:25px 18px;
-  text-align:center;
+button,select,input{font:inherit}
+button{cursor:pointer;touch-action:manipulation}
+button:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible,select:focus-visible{
+ outline:3px solid #ffc545;outline-offset:3px
 }
-header h1{margin:0;font-size:clamp(27px,5vw,43px)}
-header p{margin:5px 0}
-main{max-width:1120px;margin:25px auto;padding:0 15px}
+.shell{max-width:1150px;margin:auto;padding:18px}
+.hero{
+ background:linear-gradient(125deg,#15314f,#2479b9);
+ color:white;border-radius:24px;padding:25px;
+ display:flex;justify-content:space-between;
+ align-items:center;gap:15px;
+}
+.hero h1{font-size:clamp(28px,5vw,42px);margin:0}
+.hero p{margin:3px 0;color:#dcefff}
+.hero .emoji{font-size:65px}
+.pill{
+ background:#ffffff24;border-radius:25px;
+ display:inline-block;padding:2px 14px;
+ font-size:14px;margin-bottom:10px
+}
+.top{
+ display:flex;align-items:center;
+ gap:12px;margin:20px 0;flex-wrap:wrap
+}
+.progress{flex:1;display:flex;gap:6px;min-width:160px}
+.progress span{
+ flex:1;height:12px;background:#d6e5f2;
+ border-radius:15px
+}
+.progress span.on{background:#fbbf24}
 .panel{
-  background:white;
-  border:2px solid #dbe7f5;
-  border-radius:23px;
-  padding:24px;
-  margin-bottom:18px;
-  box-shadow:0 5px 18px #17345609;
+ background:white;border:1px solid var(--line);
+ border-radius:24px;padding:25px;margin-top:15px;
+ box-shadow:0 6px 20px #1645750d
 }
-h2{font-size:clamp(24px,4vw,32px);margin:0 0 15px}
-h3{margin:8px 0;color:#24517c}
-small,.muted{color:#61758d}
-.topline{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-bottom:15px;
+.panel h2{
+ font-size:clamp(24px,4vw,31px);
+ color:var(--navy);margin:5px 0 10px
 }
+.panel h3{color:#21496f;margin:10px 0}
+.desc{color:#617891}
 .tag{
-  background:#e7f2ff;
-  color:#174f80;
-  border-radius:25px;
-  padding:5px 16px;
-  font-weight:bold;
-}
-.progress{
-  background:#dce7f4;
-  height:14px;
-  border-radius:20px;
-  overflow:hidden;
-  margin-bottom:22px;
-}
-#progressFill{
-  background:linear-gradient(90deg,#38bdf8,#16a34a);
-  height:100%;
-  width:0;
-  transition:width .4s;
+ display:inline-block;background:#e7f2ff;
+ color:#195789;border-radius:13px;
+ padding:5px 15px;font-weight:bold
 }
 .grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:16px;
+ display:grid;grid-template-columns:1fr 1fr;
+ gap:18px;align-items:start
 }
-@media(max-width:750px){
-  .grid{grid-template-columns:1fr}
-  .panel{padding:15px}
-  body{font-size:17px}
+.box{
+ background:#f7fbff;border:1px solid #e0eafa;
+ padding:18px;border-radius:20px
 }
 .scroll{overflow-x:auto}
 table{
-  width:100%;
-  border-collapse:collapse;
-  text-align:center;
-  min-width:480px;
-  font-size:17px;
+ width:100%;border-collapse:collapse;
+ text-align:center;min-width:390px;font-size:16px
 }
-th,td{
-  border:1px solid #cddbed;
-  padding:9px 6px;
+th,td{border:1px solid #d2dfec;padding:8px}
+th{background:#e2effd}
+td:first-child{font-weight:bold}
+tr:nth-child(even) td{background:#eef6ff}
+.options{
+ display:flex;flex-wrap:wrap;
+ gap:10px;margin:15px 0
 }
-th{background:#e4f0ff}
-tr:nth-child(even) td{background:#f7fbff}
-button,input{font:inherit}
-button{
-  padding:12px 20px;
-  background:#fff;
-  border:2px solid #cbdced;
-  border-radius:15px;
-  cursor:pointer;
-  color:var(--navy);
-  font-weight:bold;
-  transition:.16s;
-  touch-action:manipulation;
+.opt{
+ background:white;border:2px solid #c8dced;
+ color:#244563;border-radius:15px;
+ padding:12px 18px;font-weight:bold;
+ min-width:110px
 }
-button:hover{border-color:var(--blue);background:#edf6ff}
-button:focus-visible{
-  outline:4px solid #fbbf24;
-  outline-offset:2px;
+.opt:hover,.opt.sel{
+ border-color:#2580ce;background:#e5f3ff
 }
-button:disabled{opacity:.45;cursor:not-allowed}
-.primary{background:var(--blue);color:white;border-color:var(--blue)}
-.primary:hover{background:#174ec1;color:white}
-.success{background:var(--green);color:white;border-color:var(--green)}
-.success:hover{background:#166534;color:white}
-.choicebox{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-@media(max-width:600px){.choicebox{grid-template-columns:repeat(2,1fr)}}
-.selected{background:#dcefff;border-color:#2563eb}
-.correct{background:#dcfce7;border-color:#16a34a}
-.feedback{
-  margin-top:17px;
-  padding:13px 17px;
-  border-radius:15px;
-  font-weight:bold;
-  display:none;
+.opt.good{background:#ddf8e8;border-color:#168657}
+.btn{
+ border:0;border-radius:14px;
+ padding:13px 22px;font-weight:bold
 }
-.feedback.good{display:block;background:#dcfce7;color:#166534}
-.feedback.bad{display:block;background:#fee2e2;color:#991b1b}
-.feedback.info{display:block;background:#fff3d1;color:#854d0e}
+.blue{background:var(--blue);color:white}
+.green{background:var(--green);color:white}
+.white{
+ background:white;color:#235f9a;
+ border:2px solid #b8d4ed
+}
 .actions{
-  display:flex;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-top:20px;
+ display:flex;gap:12px;flex-wrap:wrap;
+ margin-top:18px;align-items:center
 }
-.hidden{display:none!important}
-.chart{
-  background:#f8fbff;
-  border:1px solid #dbe7f5;
-  border-radius:18px;
-  padding:16px 10px;
+.next{
+ display:block;width:100%;margin-top:16px;
+ background:#148255;color:white;
+ border:0;border-radius:15px;
+ padding:17px;font-weight:bold;font-size:21px
 }
-.bars{
-  height:280px;
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-around;
-  gap:10px;
-  border-bottom:3px solid #59718c;
-  padding:10px 5px 0;
+.next.hidden{display:none}
+.feedback{
+ display:none;margin-top:15px;
+ padding:15px;border-radius:15px;font-weight:bold
 }
-.barcol{
-  flex:1;
-  max-width:100px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-end;
-  height:100%;
-  gap:5px;
+.feedback.ok{
+ display:block;background:#e0f8e9;
+ color:#13643f;border:1px solid #9bdab9
 }
-.bar{
-  width:62%;
-  min-height:1px;
-  border-radius:6px 6px 0 0;
-  border:1px solid #64748b;
-  transition:height .3s;
+.feedback.no{
+ display:block;background:#fff0ef;
+ color:#a32937;border:1px solid #efb7b7
 }
-.barlabel{
-  color:#163456;
-  font-weight:bold;
+.feedback.tip{
+ display:block;background:#fff6df;
+ color:#825715;border:1px solid #efd899
 }
-.colors{
-  display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
-  gap:8px;
-}
-@media(max-width:650px){.colors{grid-template-columns:repeat(2,1fr)}}
-.colorcontrol{
-  border:1px solid #cbdced;
-  padding:10px 5px;
-  border-radius:14px;
-  text-align:center;
-  background:#f8fbff;
-}
-.colorcontrol input{
-  width:68px;
-  max-width:100%;
-  text-align:center;
-  font-size:24px;
-  border:2px solid #b6cde7;
-  border-radius:10px;
-}
-.dot{
-  width:16px;height:16px;
-  display:inline-block;border:1px solid #999;
-  border-radius:50%;vertical-align:middle;
-}
-.plotwrap{overflow-x:auto;background:#f8fbff;border-radius:18px;padding:10px}
-.plotwrap svg{width:100%;max-width:680px;min-width:330px;display:block;margin:auto}
 .note{
-  background:#fff7dc;border-right:5px solid #f59e0b;
-  padding:15px;border-radius:12px;margin:15px 0;
+ background:#fff7df;border-right:5px solid #efb52c;
+ border-radius:12px;padding:13px;margin:12px 0
 }
-.reward{
-  text-align:center;
-  background:linear-gradient(145deg,#fff9e7,#e9f8ff);
-  border:4px solid #eab308;
-  padding:35px 15px;
-  border-radius:25px;
+.chart{width:100%;height:auto;display:block}
+.build{
+ display:grid;grid-template-columns:100px 1fr 95px;
+ gap:10px;padding:10px 2px;
+ border-bottom:1px solid #dce8f4;align-items:center
 }
-.medal{font-size:90px;line-height:1.4}
-#studentName{
-  padding:12px;border:2px solid #abc8e3;
-  border-radius:12px;max-width:100%;width:330px;
+.build select{
+ width:100%;max-width:220px;
+ background:white;border:2px solid #b7cfe5;
+ border-radius:11px;padding:10px;
+ color:var(--navy);font-weight:bold
 }
-footer{text-align:center;color:#6b7d90;padding:20px}
+.build.done select{
+ background:#e4f8ed;border-color:#168255
+}
+.small{font-size:14px;color:#657b92}
+.dot{
+ display:inline-block;width:13px;height:13px;
+ border-radius:50%;border:1px solid #999;
+ vertical-align:middle;margin-left:5px
+}
+.plotbox{position:relative;width:100%}
+.plotbox svg{display:block;width:100%;height:auto}
+.plot-target{
+ cursor:pointer;outline:none
+}
+.plot-target:focus{
+ stroke:#f59e0b;stroke-width:5
+}
+.plot-target:hover{stroke-width:5}
+.pointcta{
+ width:100%;background:#175d99;
+ color:white;border:0;border-radius:15px;
+ padding:17px;font-weight:bold;font-size:20px;
+ margin:12px 0
+}
+.status{
+ background:#eaf5ff;border:2px solid #91c6f6;
+ padding:15px;border-radius:15px;
+ margin-top:16px;font-weight:bold;color:#174e7b
+}
+.award{
+ border:4px solid #e9b632;
+ background:linear-gradient(#fff9df,#edfaff);
+ border-radius:25px;padding:35px 20px;
+ text-align:center
+}
+.award .medal{font-size:95px}
+.name{
+ width:320px;max-width:100%;
+ border:2px solid #adcbe7;border-radius:13px;
+ padding:13px;text-align:center
+}
+footer{
+ text-align:center;color:#6c8095;
+ font-size:13px;padding:20px
+}
+@media(max-width:760px){
+ .grid{grid-template-columns:1fr}
+ .panel{padding:15px}
+ .hero{padding:16px}
+ .hero .emoji{font-size:40px}
+ .build{grid-template-columns:72px 1fr 70px}
+ body{font-size:16px}
+ .opt{min-width:85px}
+}
 @media print{
-  body{background:white}
-  header,.progress,.topline,.actions,footer,#nameForm{display:none!important}
-  main{margin:0}
-  .panel{border:0;box-shadow:none}
-  .reward{min-height:75vh;display:flex;flex-direction:column;justify-content:center}
+ header,.top,.actions,.next,footer,
+ button,#nameEntry{display:none!important}
+ body{background:white}
+ .panel{box-shadow:none;border:0}
+ .award{min-height:80vh}
 }
 </style>
 </head>
-
 <body>
-<header>
+
+<div class="shell">
+<header class="hero">
+ <div>
+  <span class="pill">رياضيات الصف الرابع • النشاط الثالث</span>
   <h1>🕵️ المحقق الذكي</h1>
-  <p>النشاط الثالث: ما البيانات المفقودة؟</p>
-  <p>رياضيات الصف الرابع الابتدائي</p>
+  <p>ما البيانات المفقودة؟</p>
+  <p>ابحث عن الأدلة، واكتشف المفقود، وأكمل التمثيل!</p>
+ </div>
+ <div class="emoji">🔎</div>
 </header>
 
-<main>
-  <div class="topline">
-    <span id="stageName" class="tag">القضية الأولى</span>
-    <span id="stageCounter">الخطوة ١ من ٧</span>
-  </div>
-  <div class="progress"><div id="progressFill"></div></div>
-  <div id="game" aria-live="polite"></div>
-</main>
+<div class="top">
+ <div class="progress" id="progress"></div>
+ <strong id="counter"></strong>
+ <button class="btn white" onclick="toggleSound()" id="soundBtn">
+ 🔊 الصوت
+ </button>
+</div>
 
-<footer>لعبة تعليمية تفاعلية مستوحاة من النشاط الثالث في كتاب الرياضيات</footer>
+<main id="screen" aria-live="polite"></main>
+<footer>نشاط تفاعلي مستند إلى كتاب الرياضيات ودليل المعلم</footer>
+</div>
 
 <script>
 "use strict";
 
-/* الأرقام العربية المشرقية في الواجهة */
-const nf=new Intl.NumberFormat("ar-EG",{useGrouping:false});
-const ar=n=>nf.format(n);
-const digitMap="٠١٢٣٤٥٦٧٨٩";
-const toNumber=s=>Number(String(s).replace(/[٠-٩]/g,
-  c=>String(digitMap.indexOf(c))));
-
-/* بيانات المهمة الأولى من كتاب الطالب */
-const colors=[
-  {name:"أحمر",hex:"#ef4444"},
-  {name:"أزرق",hex:"#38bdf8"},
-  {name:"أخضر",hex:"#4ade80"},
-  {name:"أصفر",hex:"#facc15"},
-  {name:"أبيض",hex:"#ffffff"}
-];
-const shirts=[
-  {name:"فريد",values:[1,0,1,0,2]},
-  {name:"كريم",values:[1,1,1,1,2]},
-  {name:"جابر",values:[0,4,0,0,3]},
-  {name:"هشام",values:[1,0,0,1,5]},
-  {name:"سالم",values:[2,1,1,1,1]},
-  {name:"سلمان",values:[1,0,2,2,2]}
-];
-const shirtsMissing=[5,6,4,5,13];
-const shirtsFull=[6,6,5,5,15];
-
-/* بيانات المهمة الثانية من كتاب الطالب */
-const rooms=[
-  {id:1,desks:24,windows:5},
-  {id:2,desks:24,windows:7},
-  {id:3,desks:26,windows:4},
-  {id:4,desks:28,windows:10},
-  {id:5,desks:27,windows:7},
-  {id:6,desks:26,windows:6},
-  {id:7,desks:24,windows:4},
-  {id:8,desks:27,windows:8},
-  {id:9,desks:26,windows:5},
-  {id:10,desks:27,windows:6}
-];
-
-/* حالة اللعبة */
-let step=0;
-let solved=false;
-let pickedRooms=[];
-let addedPoints=[];
-let selectedRoom=null;
-let totalCorrect=0;
-let soundEnabled=true;
-let audioContext=null;
-
-const game=document.getElementById("game");
+/* تحويل جميع الأرقام الظاهرة إلى العربية المشرقية */
+const digits="٠١٢٣٤٥٦٧٨٩";
+const ar=n=>String(n).replace(/[0-9]/g,d=>digits[+d]);
 const $=id=>document.getElementById(id);
 
-function beep(ok=true){
-  if(!soundEnabled)return;
-  try{
-    audioContext=audioContext||
-      new(window.AudioContext||window.webkitAudioContext)();
-    let t=audioContext.currentTime;
-    const o=audioContext.createOscillator();
-    const g=audioContext.createGain();
-    o.type="sine";
-    o.frequency.setValueAtTime(ok?650:220,t);
-    if(ok)o.frequency.setValueAtTime(850,t+.12);
-    g.gain.setValueAtTime(.045,t);
-    g.gain.exponentialRampToValueAtTime(.001,t+.2);
-    o.connect(g).connect(audioContext.destination);
-    o.start(t);o.stop(t+.22);
-  }catch(e){}
+/* بيانات القمصان */
+const students=[
+ "فريد","كريم","جابر","هشام","سالم","سلمان"
+];
+const colors=[
+ {name:"أحمر",hex:"#ef4e59"},
+ {name:"أزرق",hex:"#2e9fda"},
+ {name:"أخضر",hex:"#52af56"},
+ {name:"أصفر",hex:"#ffca33"},
+ {name:"أبيض",hex:"#ffffff"}
+];
+const shirts=[
+ [1,0,1,0,2],
+ [1,1,1,1,2],
+ [0,4,0,0,3],
+ [1,0,0,1,5],
+ [2,1,1,1,1],
+ [1,0,2,2,2]
+];
+const before=[5,6,4,5,13];
+const complete=[6,6,5,5,15];
+
+/* بيانات الفصول والمكاتب والنوافذ */
+const rooms=[
+ {id:1,d:24,w:5},
+ {id:2,d:24,w:7},
+ {id:3,d:26,w:4},
+ {id:4,d:28,w:10},
+ {id:5,d:27,w:7},
+ {id:6,d:26,w:6},
+ {id:7,d:24,w:4},
+ {id:8,d:27,w:8},
+ {id:9,d:26,w:5},
+ {id:10,d:27,w:6}
+];
+
+let stage=0;
+let solved=false;
+let selectedRooms=new Set();
+let barAnswers=[null,null,null,null,null];
+let points=new Set();
+let activeRoom=3;
+let sound=true;
+
+/* مؤثر صوتي قصير */
+function beep(ok){
+ if(!sound)return;
+ try{
+  const C=window.AudioContext||window.webkitAudioContext;
+  if(!C)return;
+  const ctx=new C();
+  const osc=ctx.createOscillator();
+  const gain=ctx.createGain();
+  osc.type="sine";
+  osc.frequency.setValueAtTime(ok?650:240,ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(
+   ok?850:170,ctx.currentTime+.16
+  );
+  gain.gain.setValueAtTime(.05,ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(
+   .001,ctx.currentTime+.22
+  );
+  osc.connect(gain);gain.connect(ctx.destination);
+  osc.start();osc.stop(ctx.currentTime+.23);
+  osc.onended=()=>ctx.close();
+ }catch(e){}
 }
-function feedback(text,type="good"){
-  const f=$("feedback");
-  if(!f)return;
-  f.className="feedback "+type;
-  f.textContent=text;
-  if(type==="good")beep(true);
-  if(type==="bad")beep(false);
+function toggleSound(){
+ sound=!sound;
+ $("soundBtn").textContent=sound?"🔊 الصوت":"🔇 صامت";
 }
-function nextReady(){
-  solved=true;
-  const b=$("nextButton");
-  if(b){b.disabled=false;b.classList.remove("hidden")}
+function message(text,type="ok"){
+ const f=$("feedback");
+ if(!f)return;
+ f.className="feedback "+type;
+ f.textContent=text;
+ if(type!=="tip")beep(type==="ok");
 }
-function markSolved(){
-  if(!solved)totalCorrect++;
-  nextReady();
+function unlock(text){
+ solved=true;
+ const b=$("next");
+ if(b){
+  b.disabled=false;
+  b.classList.remove("hidden");
+ }
+ if(text)message(text,"ok");
 }
-function next(){
-  if(!solved)return;
-  step=Math.min(6,step+1);
+function go(n){
+ if(n>stage&&!solved)return;
+ stage=n;
+ solved=false;
+ render();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function back(){
+ if(stage>0){
+  stage--;
   solved=false;
   render();
-  window.scrollTo({top:0,behavior:"smooth"});
+ }
 }
-function previous(){
-  if(step===0)return;
-  step--;
-  solved=false;
-  render();
-  window.scrollTo({top:0,behavior:"smooth"});
+function base(title,description,tag,body){
+ return `<section class="panel">
+  <span class="tag">${tag}</span>
+  <h2>${title}</h2>
+  <p class="desc">${description}</p>
+  ${body}
+  <div id="feedback" class="feedback" role="status"></div>
+ </section>`;
 }
-function actionArea(label="الانتقال إلى الخطوة التالية ←"){
-  return `
-    <div id="feedback" class="feedback" role="status"></div>
-    <div class="actions">
-      <button onclick="previous()" ${step===0?"disabled":""}>
-        ↩ الخطوة السابقة
-      </button>
-      <button id="nextButton" class="success hidden"
-        onclick="next()" disabled>${label}</button>
-    </div>`;
+function navigation(label){
+ return `<div class="actions">
+ <button class="btn white" onclick="back()"
+ ${stage===0?"disabled":""}>↩ الخطوة السابقة</button>
+ <button class="btn white" onclick="showHint()">💡 تلميح</button>
+ </div>
+ <button id="next" class="next hidden" disabled
+ onclick="go(${stage+1})">${label} ⬅️</button>`;
 }
-function titles(){
- const names=[
- "القضية الأولى • اكتشف الطالب المفقود",
- "القضية الأولى • أكمل التمثيل",
- "القضية الأولى • حلّل النتائج",
- "القضية الثانية • اكتشف الغرفتين",
- "القضية الثانية • أكمل النقاط",
- "القضية الثانية • استنتج الفرق",
- "وسام المحقق الذكي"
- ];
- $("stageName").textContent=names[step];
- $("stageCounter").textContent="الخطوة "+ar(step+1)+" من "+ar(7);
- $("progressFill").style.width=((step+1)/7*100)+"%";
+const hints=[
+ "قارن مجموع الأحمر والأزرق، ثم افحص قمصان فريد.",
+ "أضف قمصان فريد إلى كل عمود من الرسم القديم.",
+ "انظر إلى العمودين الأحمر والأزرق، ثم الأخضر والأصفر.",
+ "ابحث عن نقطتين موجودتين في الجدول وغير موجودتين في الرسم.",
+ "الغرفة ٣: ٢٦ مكتبًا و٤ نوافذ. الغرفة ٥: ٢٧ مكتبًا و٧ نوافذ.",
+ "قارن بين عدد المكاتب والنوافذ في الغرف المختلفة."
+];
+function showHint(){
+ message("💡 تلميح المحقق: "+hints[stage],"tip");
 }
-function tableShirts(){
+function setProgress(){
+ $("progress").innerHTML=
+ Array.from({length:7},(_,i)=>
+ `<span class="${i<=stage?"on":""}"></span>`).join("");
+ $("counter").textContent=stage===6?
+ "اكتملت القضيتان":"الخطوة "+ar(stage+1)+" من ٧";
+}
+
+/* جدول القمصان */
+function shirtTable(){
  return `<div class="scroll"><table>
  <thead><tr><th>الطالب</th>
- ${colors.map(c=>`<th>${c.name}</th>`).join("")}</tr></thead>
- <tbody>${shirts.map(s=>`<tr>
- <th>${s.name}</th>
- ${s.values.map(v=>`<td>${v===0?"صفر":ar(v)}</td>`).join("")}
- </tr>`).join("")}</tbody></table></div>`;
-}
-function barChart(nums,title){
- const max=16;
- return `<div class="chart">
- <h3 style="text-align:center">${title}</h3>
- <p style="text-align:center" class="muted">عدد القمصان حسب اللون</p>
- <div class="bars">
- ${nums.map((n,i)=>`
-  <div class="barcol">
-   <strong>${ar(n)}</strong>
-   <div class="bar" style="height:${n/max*215}px;
-    background:${colors[i].hex}"></div>
-  </div>`).join("")}
- </div>
- <div style="display:flex;justify-content:space-around;
-  gap:5px;text-align:center;font-size:16px">
- ${colors.map(c=>`<span>${c.name}</span>`).join("")}
- </div></div>`;
-}
-function render(){
- titles();
- if(step===0)scene1();
- if(step===1)scene2();
- if(step===2)scene3();
- if(step===3)scene4();
- if(step===4)scene5();
- if(step===5)scene6();
- if(step===6)scene7();
-}
-
-/* الخطوة الأولى: اكتشاف فريد */
-function scene1(){
- game.innerHTML=`
- <section class="panel">
- <h2>🧩 القضية الأولى: القمصان المفقودة</h2>
- <p>أجرى سالم مسحًا لألوان القمصان التي يمتلكها
- ستة طلاب. لكنه نسي إدراج بيانات طالب واحد
- في التمثيل البياني!</p>
- <div class="grid">
- <div><h3>📋 سجل الأدلة</h3>${tableShirts()}</div>
- <div>${barChart(shirtsMissing,"تمثيل سالم الناقص")}</div>
- </div>
- <div class="note">
- 🔍 دليل المحقق: يقول سالم إن الأبيض أكثر الألوان
- شيوعًا، وإن الأزرق أكثر شيوعًا من الأحمر،
- والأصفر أكثر شيوعًا من الأخضر.
- </div>
- <h3>السؤال (أ): من الطالب الذي لم تُدرج بياناته؟</h3>
- <div class="choicebox">
- ${shirts.map(s=>`<button onclick="answerStudent('${s.name}',this)">
- ${s.name}</button>`).join("")}
- </div>
- ${actionArea("الخطوة ٢: أكمل التمثيل ←")}
- </section>`;
-}
-function answerStudent(name,btn){
- if(solved)return;
- if(name==="فريد"){
-   btn.classList.add("correct");
-   markSolved();
-   feedback("أحسنت أيها المحقق البطل! فريد هو الطالب المفقود. بإضافة بياناته يصبح الأحمر مساويًا للأزرق، والأخضر مساويًا للأصفر.");
- }else{
-   feedback("حاول مجددًا! قارن مجموع كل لون في الجدول بالأعمدة الموجودة في الرسم.","bad");
- }
-}
-
-/* الخطوة الثانية: إكمال الأعمدة */
-function scene2(){
- game.innerHTML=`
- <section class="panel">
- <h2>📊 (ب) أكمل التمثيل البياني</h2>
- <p>اعتمد على جدول الطلاب الستة، واحسب مجموع
- القمصان من كل لون، ثم اكتب عددها.</p>
- <div class="grid">
- <div>${tableShirts()}</div>
- <div>
- <div class="colors">
- ${colors.map((c,i)=>`
-  <div class="colorcontrol">
-  <span class="dot" style="background:${c.hex}"></span>
-  <br><strong>${c.name}</strong><br>
-  <input id="color${i}" value="${ar(shirtsMissing[i])}"
-    inputmode="numeric" aria-label="عدد القمصان ${c.name}">
-  </div>`).join("")}
- </div>
- <div id="liveBars">${barChart(shirtsMissing,"التمثيل الذي تكمله")}</div>
- </div></div>
- <div class="actions">
- <button class="primary" onclick="checkShirts()">🔎 تحقق من التمثيل</button>
- </div>
- ${actionArea("الخطوة ٣: قارن النتائج ←")}
- </section>`;
- for(let i=0;i<5;i++){
-   $("color"+i).addEventListener("input",updateBars);
- }
-}
-function readBars(){
- return colors.map((c,i)=>toNumber($("color"+i).value));
-}
-function updateBars(){
- const vals=readBars().map(n=>Number.isFinite(n)&&n>=0?Math.min(n,16):0);
- $("liveBars").innerHTML=barChart(vals,"التمثيل الذي تكمله");
-}
-function checkShirts(){
- const vals=readBars();
- if(vals.every((n,i)=>n===shirtsFull[i])){
-   markSolved();
-   feedback("رائع! التمثيل مكتمل. الأحمر ٦، الأزرق ٦، الأخضر ٥، الأصفر ٥، والأبيض ١٥.");
- }else{
-   feedback("هناك عدد يحتاج إلى مراجعة. أضف قمصان فريد إلى الأعمدة الأصلية، ولا تنس أن كلمة «صفر» تعني عدم وجود قمصان.","bad");
- }
-}
-
-/* الخطوة الثالثة: مقارنة النتائج */
-function scene3(){
- game.innerHTML=`
- <section class="panel">
- <h2>🧠 (ج) ماذا تغير في استنتاج سالم؟</h2>
- <div class="grid">
- ${barChart(shirtsMissing,"التمثيل الناقص")}
- ${barChart(shirtsFull,"التمثيل المكتمل")}
- </div>
- <h3>أي العبارات التالية صحيحة بعد إضافة بيانات فريد؟</h3>
- <div class="choicebox">
- <button onclick="answerCompare(0,this)">
- لا تزال الزرقاء أكثر من الحمراء
- </button>
- <button onclick="answerCompare(1,this)">
- الحمراء تساوي الزرقاء، والخضراء تساوي الصفراء
- </button>
- <button onclick="answerCompare(2,this)">
- الأحمر هو اللون الأكثر شيوعًا
- </button></div>
- ${actionArea("ابدأ القضية الثانية ←")}
- </section>`;
-}
-function answerCompare(n,btn){
- if(solved)return;
- if(n===1){
-  btn.classList.add("correct");
-  markSolved();
-  feedback("تحقيق ناجح! الأبيض ما زال الأكثر شيوعًا، لكن الأحمر أصبح مساويًا للأزرق، والأخضر أصبح مساويًا للأصفر.");
- }else feedback("قارن ارتفاع الأعمدة بعد الإضافة، ثم حاول مرة أخرى.","bad");
-}
-
-/* بيانات الغرف */
-function roomTable(all=true){
- const rows=all?rooms:rooms.filter(r=>r.id===3||r.id===5);
- return `<div class="scroll"><table>
- <thead><tr><th>الغرفة</th><th>عدد المكاتب</th>
- <th>عدد النوافذ</th></tr></thead><tbody>
- ${rows.map(r=>`<tr><td>${ar(r.id)}</td>
- <td>${ar(r.desks)}</td><td>${ar(r.windows)}</td></tr>`).join("")}
+ ${colors.map(c=>`<th>
+ <span class="dot" style="background:${c.hex}"></span>
+ ${c.name}</th>`).join("")}
+ </tr></thead><tbody>
+ ${shirts.map((row,i)=>`<tr><td>${students[i]}</td>
+ ${row.map(v=>`<td>${v===0?"صفر":ar(v)}</td>`).join("")}
+ </tr>`).join("")}
  </tbody></table></div>`;
 }
-function plot(showMissing=false){
- const w=610,h=355,left=65,bottom=300,top=35;
- const xs=n=>left+(n-23)*95;
- const ys=n=>bottom-(n-3)*34;
- let grid="";
- for(let y=4;y<=10;y++){
-   grid+=`<line x1="${left}" y1="${ys(y)}" x2="555"
-     y2="${ys(y)}" stroke="#dde6f1"/>
-     <text x="43" y="${ys(y)+6}" font-size="16"
-     text-anchor="middle">${ar(y)}</text>`;
+
+/* رسم الأعمدة */
+function barChart(values,title){
+ const W=560,H=315;
+ const left=50,bottom=250,top=24,max=16;
+ let svg=`<svg class="chart" viewBox="0 0 ${W} ${H}"
+ role="img" aria-label="تمثيل بالأعمدة لعدد القمصان">`;
+ for(let n=0;n<=16;n+=4){
+  let y=bottom-n/max*210;
+  svg+=`<line x1="48" y1="${y}" x2="540" y2="${y}"
+  stroke="#dae5f1"/>
+  <text x="37" y="${y+5}" text-anchor="middle"
+  fill="#546a82" font-size="15">${ar(n)}</text>`;
  }
- for(let x=24;x<=28;x++){
-  grid+=`<line x1="${xs(x)}" y1="${top}"
-     x2="${xs(x)}" y2="${bottom}" stroke="#e4ecf7"/>
-     <text x="${xs(x)}" y="326" text-anchor="middle"
-     font-size="17">${ar(x)}</text>`;
- }
- let points="";
- for(const r of rooms){
-  const missing=r.id===3||r.id===5;
-  if(missing&&!showMissing&&!addedPoints.includes(r.id))continue;
-  const added=missing;
-  points+=`<circle cx="${xs(r.desks)}" cy="${ys(r.windows)}"
-    r="9" fill="${added?"#22c55e":"#fbbf24"}"
-    stroke="${added?"#15803d":"#b77912"}"
-    stroke-width="2">
-    <title>الغرفة ${ar(r.id)}: ${ar(r.desks)} مكتبًا،
-    ${ar(r.windows)} نوافذ</title></circle>`;
- }
- return `<div class="plotwrap">
- <svg viewBox="0 0 ${w} ${h}" role="img"
- aria-label="تمثيل بالنقاط لعدد المكاتب والنوافذ">
- ${grid}
- <line x1="${left}" y1="${bottom}" x2="565"
- y2="${bottom}" stroke="#334155" stroke-width="3"/>
- <line x1="${left}" y1="${bottom}" x2="${left}"
- y2="25" stroke="#334155" stroke-width="3"/>
- ${points}
- <text x="300" y="351" text-anchor="middle"
- font-size="17">عدد المكاتب</text>
- <text x="17" y="185" font-size="17" text-anchor="middle"
- transform="rotate(-90 17 185)">عدد النوافذ</text>
- </svg></div>`;
+ values.forEach((n,i)=>{
+  let h=n/max*210;
+  let x=72+i*95;
+  svg+=`<rect x="${x}" y="${bottom-h}"
+  width="49" height="${h}" rx="5"
+  fill="${colors[i].hex}" stroke="#59718b"
+  stroke-width="1.5"/>
+  <text x="${x+24}" y="${bottom-h-8}"
+  text-anchor="middle" fill="#173858"
+  font-weight="bold" font-size="18">${ar(n)}</text>
+  <text x="${x+24}" y="279" text-anchor="middle"
+  font-size="16">${colors[i].name}</text>`;
+ });
+ svg+=`<path d="M48 23 V250 H540"
+ stroke="#435c75" fill="none" stroke-width="2"/>
+ <text x="295" y="310" text-anchor="middle"
+ font-size="14">ألوان القمصان</text></svg>`;
+ return `<div class="box"><h3>${title}</h3>${svg}</div>`;
 }
 
-/* الخطوة الرابعة: اكتشاف الغرفتين */
-function scene4(){
- pickedRooms=[];
- addedPoints=[];
- game.innerHTML=`
- <section class="panel">
- <h2>🏫 القضية الثانية: النوافذ والمكاتب</h2>
- <p>جمع محسن بيانات عن عدد المكاتب والنوافذ
- في عشر غرف صفية، ثم نسي إدراج بيانات غرفتين.</p>
+/* المرحلة الأولى */
+function scene0(){
+ const body=`
  <div class="grid">
- <div><h3>📋 جدول محسن</h3>${roomTable()}</div>
- <div><h3>📍 تمثيل محسن الناقص</h3>${plot()}</div>
+ <div class="box">
+ <h3>📋 جدول سالم الأصلي</h3>
+ ${shirtTable()}
  </div>
- <h3>السؤال (أ): أي غرفتين لم تُدرج بياناتهما؟</h3>
- <p class="muted">اختر غرفتين من الأزرار التالية.</p>
- <div class="choicebox">
- ${rooms.map(r=>`<button id="room${r.id}"
- onclick="pickRoom(${r.id})">الغرفة ${ar(r.id)}</button>`).join("")}
+ ${barChart(before,"📊 رسم سالم الناقص")}
+ </div>
+ <div class="note">
+ يقول سالم إن الأبيض أكثر الألوان شيوعًا،
+ وإن الأزرق أكثر من الأحمر، والأصفر أكثر من الأخضر.
+ </div>
+ <h3>(أ) من الطالب الذي لم تُدرج بياناته؟</h3>
+ <div class="options">
+ ${students.map(n=>`<button class="opt"
+ onclick="answerStudent('${n}',this)">${n}</button>`).join("")}
+ </div>
+ ${navigation("الخطوة ٢: أكمل التمثيل")}`;
+ return base("القضية الأولى: الطالب المفقود",
+ "ستة طلاب شاركوا في مسح ألوان القمصان، لكن بيانات أحدهم غير موجودة في الرسم.",
+ "القضية ١ • اكتشف المفقود",body);
+}
+function answerStudent(name,b){
+ if(solved)return;
+ if(name==="فريد"){
+  b.classList.add("good");
+  unlock("أحسنت أيها المحقق البطل! فريد هو المفقود. بإضافة بياناته يتساوى الأحمر مع الأزرق، والأخضر مع الأصفر.");
+ }else{
+  message("حاول مجددًا! اقرأ الجدول وقارن مجموع ألوان القمصان بالرسم.","no");
+ }
+}
+
+/* المرحلة الثانية: القوائم المنسدلة */
+function scene1(){
+ const rows=colors.map((c,i)=>`
+ <div class="build" id="build${i}">
+ <strong><span class="dot"
+ style="background:${c.hex}"></span>${c.name}</strong>
+ <select id="color${i}" onchange="changeBar(${i},this.value)"
+ aria-label="اختر العدد الكامل للقمصان ${c.name}">
+ <option value="">اختر العدد</option>
+ ${Array.from({length:17},(_,k)=>`
+ <option value="${k}"
+ ${barAnswers[i]===k?"selected":""}>${ar(k)}</option>
+ `).join("")}
+ </select>
+ <span class="small">كان ${ar(before[i])}</span>
+ </div>`).join("");
+ const shown=barAnswers.map((n,i)=>n===null?before[i]:n);
+ const body=`
+ <div class="grid">
+ ${barChart(before,"قبل إضافة بيانات فريد")}
+ <div class="box">
+ <h3>🎨 أكمل بيانات الألوان</h3>
+ <p>اختر العدد الصحيح من القائمة المنسدلة لكل لون.</p>
+ ${rows}
+ <div class="note">
+ القيمة الجديدة = العدد في الرسم القديم + قمصان فريد.
+ </div>
+ </div>
+ </div>
+ <div id="newChart" style="margin-top:18px">
+ ${barChart(shown,"📊 التمثيل الذي تبنيه")}
  </div>
  <div class="actions">
- <button class="primary" onclick="checkRooms()">تحقق من الغرفتين</button>
+ <button class="btn blue" onclick="checkBars()">
+ 🔎 تحقق من الأعمدة
+ </button>
  </div>
- ${actionArea("الخطوة التالية: أضف النقطتين ←")}
- </section>`;
+ ${navigation("الخطوة ٣: قارن النتائج")}`;
+ return base("(ب) أنشئ تمثيلًا بيانيًا مكتملًا",
+ "أضف بيانات فريد إلى الأعمدة باستخدام القوائم المنسدلة، وشاهد الرسم يتغير أمامك.",
+ "القضية ١ • أكمل التمثيل",body);
 }
-function pickRoom(id){
+function changeBar(i,value){
  if(solved)return;
- const index=pickedRooms.indexOf(id);
- if(index>=0)pickedRooms.splice(index,1);
- else if(pickedRooms.length<2)pickedRooms.push(id);
+ barAnswers[i]=value===""?null:Number(value);
+ const shown=barAnswers.map((n,j)=>
+ n===null?before[j]:n);
+ $("newChart").innerHTML=barChart(
+ shown,"📊 التمثيل الذي تبنيه"
+ );
+ $("build"+i).classList.toggle(
+ "done",barAnswers[i]===complete[i]
+ );
+}
+function checkBars(){
+ const wrong=colors.filter((c,i)=>
+ barAnswers[i]!==complete[i]).map(c=>c.name);
+ if(wrong.length){
+  message("راجع الأعمدة التالية: "+
+  wrong.join("، ")+". أضف بيانات فريد إلى القيم القديمة.","no");
+ }else{
+  unlock("ممتاز! أصبح مجموع القمصان: الأحمر ٦، الأزرق ٦، الأخضر ٥، الأصفر ٥، الأبيض ١٥.");
+ }
+}
+
+/* المرحلة الثالثة: مقارنة نتائج سالم */
+function scene2(){
+ const body=`
+ <div class="grid">
+ ${barChart(before,"الرسم الناقص")}
+ ${barChart(complete,"الرسم المكتمل")}
+ </div>
+ <h3>(ج) بِمَ تختلف النتائج الجديدة؟</h3>
+ <div class="options" style="display:grid">
+ <button class="opt" onclick="answerCompare(0,this)">
+ الأزرق ما زال أكثر من الأحمر.
+ </button>
+ <button class="opt" onclick="answerCompare(1,this)">
+ الأحمر يساوي الأزرق، والأخضر يساوي الأصفر.
+ </button>
+ <button class="opt" onclick="answerCompare(2,this)">
+ لم تتغير أي نتيجة.
+ </button>
+ </div>
+ ${navigation("ابدأ القضية الثانية")}`;
+ return base("قارن واستنتج",
+ "هل يمكن أن تغيّر البيانات المفقودة استنتاجنا؟ انظر إلى الرسمين.",
+ "القضية ١ • الاستنتاج",body);
+}
+function answerCompare(n,b){
+ if(solved)return;
+ if(n===1){
+  b.classList.add("good");
+  unlock("صحيح! الأبيض بقي الأكثر شيوعًا، لكن الأحمر أصبح مساويًا للأزرق، والأخضر مساويًا للأصفر.");
+ }else message("انظر إلى ارتفاع الأعمدة في الرسم المكتمل.","no");
+}
+
+/* جدول الغرف */
+function roomTable(onlyMissing=false){
+ const rows=onlyMissing?
+ rooms.filter(r=>r.id===3||r.id===5):rooms;
+ return `<div class="scroll"><table>
+ <thead><tr><th>الغرفة</th>
+ <th>المكاتب</th><th>النوافذ</th></tr></thead>
+ <tbody>${rows.map(r=>`
+ <tr><td>${ar(r.id)}</td>
+ <td>${ar(r.d)}</td><td>${ar(r.w)}</td></tr>
+ `).join("")}</tbody></table></div>`;
+}
+
+/* رسم النقاط والدائرتين الزرقاوين */
+function scatter(interactive=false,full=false){
+ const L=75,B=285;
+ const x=d=>L+(d-23)*88;
+ const y=w=>B-(w-3)*31;
+ let s=`<svg class="chart" viewBox="0 0 590 365"
+ role="img" aria-label="تمثيل عدد المكاتب والنوافذ">`;
+ for(let d=24;d<=28;d++){
+  s+=`<line x1="${x(d)}" y1="36" x2="${x(d)}"
+  y2="${B}" stroke="#dce7f3"/>
+  <text x="${x(d)}" y="310" text-anchor="middle"
+  font-size="16">${ar(d)}</text>`;
+ }
+ for(let w=4;w<=10;w++){
+  s+=`<line x1="${L}" y1="${y(w)}"
+  x2="535" y2="${y(w)}" stroke="#dce7f3"/>
+  <text x="53" y="${y(w)+5}" text-anchor="middle"
+  font-size="16">${ar(w)}</text>`;
+ }
+ s+=`<path d="M75 35 V285 H540"
+ fill="none" stroke="#415b76" stroke-width="3"/>
+ <text x="300" y="349" text-anchor="middle"
+ font-size="17">عدد المكاتب</text>
+ <text transform="translate(19 169) rotate(-90)"
+ text-anchor="middle" font-size="17">عدد النوافذ</text>`;
  rooms.forEach(r=>{
-  $("room"+r.id).classList.toggle("selected",
-   pickedRooms.includes(r.id));
+  const missing=r.id===3||r.id===5;
+  const added=points.has(r.id);
+  const show=!missing||full||added;
+  if(show){
+   s+=`<circle cx="${x(r.d)}" cy="${y(r.w)}"
+    r="9" fill="${missing?"#29b77d":"#ffbd31"}"
+    stroke="${missing?"#117a55":"#ba8112"}"
+    stroke-width="2">
+    <title>الغرفة ${ar(r.id)}</title></circle>`;
+  }
+  if(interactive&&missing&&!added){
+   s+=`<circle cx="${x(r.d)}" cy="${y(r.w)}"
+    r="17" fill="#e3f4ff" fill-opacity=".75"
+    stroke="#258ce2" stroke-width="3"
+    stroke-dasharray="5 4"
+    class="plot-target" tabindex="0" role="button"
+    aria-label="إضافة نقطة الغرفة ${ar(r.id)}"
+    onclick="placePoint(${r.id})"
+    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();placePoint(${r.id})}">
+    <title>اضغط لإضافة الغرفة ${ar(r.id)}</title>
+    </circle>`;
+  }
+ });
+ s+="</svg>";
+ return `<div class="box"><div class="plotbox">${s}</div>
+ <p class="small">المحور الأفقي: المكاتب • المحور الرأسي: النوافذ</p></div>`;
+}
+
+/* المرحلة الرابعة: تحديد الغرف */
+function scene3(){
+ selectedRooms=new Set();
+ const body=`
+ <div class="grid">
+ <div class="box">
+ <h3>📋 نتائج مسح محسن</h3>${roomTable()}
+ </div>
+ <div>
+ <h3>📈 التمثيل الناقص</h3>${scatter()}
+ </div>
+ </div>
+ <h3>(أ) أي الغرفتين غير مدرجتين في الرسم؟</h3>
+ <p>اختر غرفتين ثم اضغط «تحقق».</p>
+ <div class="options">
+ ${rooms.map(r=>`<button class="opt"
+ id="room${r.id}" onclick="chooseRoom(${r.id})">
+ الغرفة ${ar(r.id)}</button>`).join("")}
+ </div>
+ <div class="actions">
+ <button class="btn blue" onclick="checkRooms()">
+ 🔎 تحقق من الغرفتين
+ </button>
+ </div>
+ ${navigation("الخطوة التالية: أضف النقطتين")}`;
+ return base("القضية الثانية: الغرف المفقودة",
+ "أجرى محسن مسحًا لعدد النوافذ والمكاتب في عشر غرف صفية، لكنه لم يمثل غرفتين.",
+ "القضية ٢ • اكتشف الغرفتين",body);
+}
+function chooseRoom(id){
+ if(solved)return;
+ if(selectedRooms.has(id))selectedRooms.delete(id);
+ else if(selectedRooms.size<2)selectedRooms.add(id);
+ rooms.forEach(r=>{
+  $("room"+r.id).classList.toggle(
+  "sel",selectedRooms.has(r.id));
  });
 }
 function checkRooms(){
- if(pickedRooms.length!==2){
-  feedback("اختر غرفتين أولًا يا محقق.","info");
-  return;
+ if(selectedRooms.size!==2){
+  message("اختر غرفتين أولًا.","tip");return;
  }
- if(pickedRooms.includes(3)&&pickedRooms.includes(5)){
-  markSolved();
-  feedback("أحسنت! الغرفتان المفقودتان هما ٣ و٥. الآن أكمل بياناتهما في الرسم.");
- }else feedback("راجع الأزواج المرتبة في الجدول وقارنها بالنقاط الظاهرة.","bad");
+ if(selectedRooms.has(3)&&selectedRooms.has(5)){
+  unlock("ممتاز! الغرفتان المفقودتان هما ٣ و٥. الغرفة ٣ بها ٢٦ مكتبًا و٤ نوافذ، والغرفة ٥ بها ٢٧ مكتبًا و٧ نوافذ.");
+ }else{
+  message("راجع النقاط الموجودة في الرسم وقارنها ببيانات الجدول.","no");
+ }
 }
 
-/* الخطوة الخامسة: إكمال نقطتي الغرفتين */
-function scene5(){
- addedPoints=[];
- selectedRoom=null;
- game.innerHTML=`
- <section class="panel">
- <h2>✏️ (ب) أكمل تمثيل محسن</h2>
- <p>اختر الغرفة ثم حدّد الزوج المرتب الصحيح.
- العدد الأول يمثل المكاتب، والثاني يمثل النوافذ.</p>
+/* المرحلة الخامسة: وضع نقطتي الغرفتين */
+function scene4(){
+ const done3=points.has(3),done5=points.has(5);
+ if(done3&&!done5)activeRoom=5;
+ if(done5&&!done3)activeRoom=3;
+ const body=`
  <div class="grid">
- <div>
+ <div class="box">
  <h3>📋 الدليل من الجدول</h3>
- ${roomTable(false)}
- <div class="note">
- نكتب الزوج المرتب هكذا:
- (عدد المكاتب، عدد النوافذ).
- </div>
- <div class="choicebox" style="grid-template-columns:repeat(2,1fr)">
- <button id="pick3" onclick="selectPlotRoom(3)">
- الغرفة ٣
+ ${roomTable(true)}
+ <p>اختر الغرفة ثم اضغط على الدائرة الزرقاء المتقطعة
+ في موقعها الصحيح على الرسم.</p>
+ <div class="options">
+ <button id="choose3" class="opt ${activeRoom===3?"sel":""}"
+ onclick="selectRoom(3)" ${done3?"disabled":""}>
+ ${done3?"✅ ":""}الغرفة ٣
  </button>
- <button id="pick5" onclick="selectPlotRoom(5)">
- الغرفة ٥
+ <button id="choose5" class="opt ${activeRoom===5?"sel":""}"
+ onclick="selectRoom(5)" ${done5?"disabled":""}>
+ ${done5?"✅ ":""}الغرفة ٥
  </button>
  </div>
- <h3>اختر موقع النقطة:</h3>
- <div class="choicebox">
- <button onclick="addPoint(26,4)">٢٦ مكتبًا، ٤ نوافذ</button>
- <button onclick="addPoint(27,7)">٢٧ مكتبًا، ٧ نوافذ</button>
- <button onclick="addPoint(26,7)">٢٦ مكتبًا، ٧ نوافذ</button>
- <button onclick="addPoint(27,4)">٢٧ مكتبًا، ٤ نوافذ</button>
+ <div id="guide" class="status">
+ ${points.size===2?
+ "🎉 اكتمل الرسم! اضغط الزر الأخضر للمتابعة.":
+ "👆 الغرفة المختارة: "+ar(activeRoom)+
+ ". اضغط على دائرتها الزرقاء، أو استخدم الزر الكبير أدناه."}
  </div>
+ <button id="addPointButton" class="pointcta"
+ onclick="placePoint(activeRoom)"
+ ${points.size===2?"disabled":""}>
+ 📍 ${points.size===2?
+ "اكتملت النقطتان":
+ "أضف نقطة الغرفة "+ar(activeRoom)+" إلى الرسم"}
+ </button>
  </div>
  <div>
- <h3>📈 الرسم البياني</h3>
- <div id="plotArea">${plot()}</div>
- <p id="pointProgress" class="muted">
- النقطتان المفقودتان تنتظران الاكتشاف.
+ <h3>🖊️ أضف النقطتين المفقودتين</h3>
+ <div id="interactivePlot">
+ ${scatter(true)}
+ </div>
+ <p class="small">
+ الدائرتان الزرقاوان المتقطعتان هما النقطتان المفقودتان.
+ بعد إضافتهما تتحولان إلى اللون الأخضر.
  </p>
  </div>
  </div>
- <div id="feedback" class="feedback" role="status"></div>
- <div class="actions">
- <button onclick="previous()">↩ الخطوة السابقة</button>
- <button id="nextButton" class="success hidden"
- disabled onclick="next()">
- اكتمل الرسم! الانتقال إلى الخطوة التالية ←
+ <button id="next" class="next"
+ onclick="go(5)" ${points.size===2?"":"disabled"}>
+ ${points.size===2?
+ "✅ اكتمل الرسم! انتقل إلى الاستنتاج ⬅️":
+ "🔒 أضف النقطتين أولًا للانتقال"}
  </button>
- </div>
- </section>`;
+ <div class="actions">
+ <button class="btn white" onclick="back()">↩ الخطوة السابقة</button>
+ <button class="btn white" onclick="showHint()">💡 تلميح</button>
+ </div>`;
+ return base("(ب) أكمل تمثيل محسن",
+ "اقرأ الزوج المرتب لكل غرفة وضع نقطتها المفقودة.",
+ "القضية ٢ • استكمال التمثيل",body);
 }
-function selectPlotRoom(id){
- if(addedPoints.includes(id)){
-  feedback("لقد أضفت هذه الغرفة بالفعل. أكمل الأخرى.","info");
-  return;
- }
- selectedRoom=id;
- $("pick3").classList.toggle("selected",id===3);
- $("pick5").classList.toggle("selected",id===5);
- feedback("الآن اختر عدد المكاتب والنوافذ الصحيح للغرفة "+ar(id)+".","info");
+function selectRoom(id){
+ if(points.has(id))return;
+ activeRoom=id;
+ $("choose3").classList.toggle("sel",id===3);
+ $("choose5").classList.toggle("sel",id===5);
+ $("guide").textContent=
+ "الغرفة المختارة: "+ar(id)+
+ ". ابحث عن النقطة الصحيحة في الرسم.";
+ $("addPointButton").textContent=
+ "📍 أضف نقطة الغرفة "+ar(id)+" إلى الرسم";
 }
-function addPoint(x,y){
- if(selectedRoom===null){
-  feedback("اختر الغرفة ٣ أو ٥ أولًا.","info");
+function placePoint(id){
+ if(points.has(id))return;
+ if(id!==activeRoom){
+  message("أنت تبحث الآن عن الغرفة "+ar(activeRoom)+
+  ". اختر دائرتها أولًا.","no");
   return;
  }
- const r=rooms.find(t=>t.id===selectedRoom);
- if(r.desks!==x||r.windows!==y){
-  feedback("النقطة ليست صحيحة. اقرأ عدد المكاتب أولًا ثم عدد النوافذ.","bad");
-  return;
- }
- if(!addedPoints.includes(r.id))addedPoints.push(r.id);
- $("plotArea").innerHTML=plot();
- $("pick"+r.id).classList.add("correct");
- $("pick"+r.id).disabled=true;
- feedback("✅ نقطة الغرفة "+ar(r.id)+" في مكانها الصحيح!","good");
- selectedRoom=null;
- if(addedPoints.length===1){
-  const other=addedPoints.includes(3)?5:3;
-  $("pointProgress").textContent=
-   "تبقّت الغرفة "+ar(other)+". اضغط زرها ثم اختر موقع نقطتها.";
-  selectPlotRoom(other);
+ points.add(id);
+ beep(true);
+ if(points.size===2){
+  solved=true;
+  $("interactivePlot").innerHTML=scatter(true);
+  $("guide").textContent=
+   "🎉 اكتمل الرسم! أضفت الغرفتين ٣ و٥ بنجاح.";
+  $("addPointButton").disabled=true;
+  $("addPointButton").textContent="✅ النقطتان مكتملتان";
+  const next=$("next");
+  next.disabled=false;
+  next.textContent="✅ اكتمل الرسم! انتقل إلى الاستنتاج ⬅️";
+  message("أحسنت أيها المحقق البطل! اضغط الزر الأخضر للانتقال.","ok");
  }else{
-  $("pointProgress").textContent=
-   "اكتملت النقطتان بنجاح! يمكنك المتابعة الآن.";
-  markSolved();
-  feedback("أحسنت أيها المحقق! أضفت الغرفتين ٣ و٥. اضغط الزر الأخضر للمتابعة.");
+  const other=id===3?5:3;
+  activeRoom=other;
+  $("interactivePlot").innerHTML=scatter(true);
+  $("choose"+id).disabled=true;
+  $("choose"+id).textContent="✅ الغرفة "+ar(id);
+  selectRoom(other);
+  $("guide").textContent=
+  "✅ أضفت الغرفة "+ar(id)+
+  ". الآن أكمل الغرفة "+ar(other)+".";
+  message("رائع! نقطة الغرفة "+ar(id)+
+  " صحيحة. بقيت غرفة واحدة.","ok");
  }
 }
 
-/* الخطوة السادسة: تحليل البيانات */
-function scene6(){
- game.innerHTML=`
- <section class="panel">
- <h2>🔍 (ج) ماذا اكتشف محسن بعد إكمال الرسم؟</h2>
+/* المرحلة السادسة: استنتاج محسن */
+function scene5(){
+ const body=`
  <div class="grid">
- <div><h3>التمثيل المكتمل</h3>${plot(true)}</div>
- <div>
- <h3>اختر الاستنتاج الصحيح:</h3>
- <div style="display:grid;gap:10px">
- <button onclick="answerWindows(0,this)">
- عدد النوافذ يزداد دائمًا عندما يزداد عدد المكاتب.
+ <div><h3>قبل الإكمال</h3>${scatter()}</div>
+ <div><h3>بعد الإكمال</h3>${scatter(false,true)}</div>
+ </div>
+ <h3>(ج) بِمَ تختلف النتائج بعد إكمال الرسم؟</h3>
+ <div class="options" style="display:grid">
+ <button class="opt" onclick="finalAnswer(0,this)">
+ كلما زاد عدد المكاتب زاد عدد النوافذ دائمًا.
  </button>
- <button onclick="answerWindows(1,this)">
- الغرفة التي تحتوي على أكبر عدد من المكاتب
- تحتوي أيضًا على أكبر عدد من النوافذ،
- لكن زيادة المكاتب لا تعني دائمًا زيادة النوافذ.
+ <button class="opt" onclick="finalAnswer(1,this)">
+ تكتمل بيانات جميع الغرف، ونلاحظ أن زيادة المكاتب
+ لا تعني دائمًا زيادة النوافذ.
  </button>
- <button onclick="answerWindows(2,this)">
- جميع الغرف فيها عدد النوافذ نفسه.
+ <button class="opt" onclick="finalAnswer(2,this)">
+ عدد النوافذ متساوٍ في جميع الغرف.
  </button>
  </div>
- </div>
- </div>
- ${actionArea("احصل على وسام المحقق الذكي 🏅")}
- </section>`;
+ ${navigation("احصل على وسام المحقق الذكي 🏅")}`;
+ return base("الاستنتاج الأخير",
+ "قارن تمثيل محسن قبل الإكمال وبعده، واستنتج ما تغير.",
+ "القضية ٢ • تحليل الأدلة",body);
 }
-function answerWindows(n,btn){
+function finalAnswer(n,b){
  if(solved)return;
  if(n===1){
-  btn.classList.add("correct");
-  markSolved();
-  feedback("رائع! الغرفة ٤ تضم ٢٨ مكتبًا و١٠ نوافذ، وهي الأعلى في كليهما. لكن بقية الغرف لا تتبع دائمًا علاقة طردية ثابتة.");
- }else feedback("راجع النقاط: هل كل زيادة في عدد المكاتب تعني زيادة عدد النوافذ؟","bad");
+  b.classList.add("good");
+  unlock("صحيح! أصبحت بيانات جميع الغرف ممثلة، ولا توجد علاقة ثابتة تجعل النوافذ تزيد كلما زادت المكاتب.");
+ }else{
+  message("راجع الغرف التي تتساوى في المكاتب وتختلف في النوافذ.","no");
+ }
 }
 
-/* الخطوة السابعة: الوسام */
-function scene7(){
- game.innerHTML=`
- <section class="panel">
- <div class="reward">
+/* المرحلة السابعة: الوسام */
+function scene6(){
+ return `<section class="panel">
+ <div class="award">
  <div class="medal">🏅</div>
  <h2>وسام المحقق الذكي</h2>
  <h3>أحسنت أيها المحقق البطل!</h3>
- <p>لقد نجحت في كشف البيانات المفقودة
- وإكمال التمثيلات البيانية.</p>
- <h2 id="winnerName">محقق الرياضيات المتميز</h2>
- <p>⭐ قضية القمصان: مكتملة</p>
- <p>⭐ قضية النوافذ والمكاتب: مكتملة</p>
- <p>🎉 أنت الآن محقق بيانات محترف!</p>
+ <p>نجحت في حل قضيتين باستخدام التفكير والاستدلال
+ وقراءة البيانات والتمثيلات البيانية.</p>
+ <h2 id="winner">محقق الرياضيات المتميز</h2>
+ <div class="box" style="max-width:650px;margin:20px auto;text-align:right">
+ <p>✅ القضية الأولى: اكتشفت بيانات فريد المفقودة.</p>
+ <p>✅ أكملت تمثيل القمصان بالأعمدة.</p>
+ <p>✅ القضية الثانية: اكتشفت الغرفتين ٣ و٥.</p>
+ <p>✅ أضفت النقطتين وأكملت تمثيل محسن.</p>
+ <p>🌟 تعلمت أن البيانات المفقودة قد تغيّر النتائج.</p>
  </div>
- <div id="nameForm" class="panel" style="margin-top:20px">
- <h3>اكتب اسمك على الوسام:</h3>
- <input id="studentName" placeholder="اسم الطالب"
- maxlength="55" oninput="setWinner(this.value)">
- <div class="actions">
- <button class="primary" onclick="window.print()">🖨️ طباعة الوسام</button>
- <button onclick="restart()">🔄 العب من جديد</button>
- <button onclick="toggleSound()" id="soundButton">
- 🔊 الصوت
- </button>
- </div></div>
+ </div>
+ <div id="nameEntry" style="text-align:center;margin-top:20px">
+ <p>اكتب اسمك ليظهر على الوسام:</p>
+ <input class="name" placeholder="اسم الطالب" maxlength="50"
+ oninput="document.getElementById('winner').textContent=this.value.trim()||'محقق الرياضيات المتميز'">
+ <div class="actions" style="justify-content:center">
+ <button class="btn green" onclick="window.print()">🖨️ اطبع الوسام</button>
+ <button class="btn blue" onclick="restart()">🔄 العب من جديد</button>
+ </div>
+ </div>
  </section>`;
- beep(true);
-}
-function setWinner(name){
- $("winnerName").textContent=name.trim()||"محقق الرياضيات المتميز";
-}
-function restart(){
- step=0;solved=false;totalCorrect=0;
- pickedRooms=[];addedPoints=[];selectedRoom=null;
- render();window.scrollTo({top:0,behavior:"smooth"});
-}
-function toggleSound(){
- soundEnabled=!soundEnabled;
- $("soundButton").textContent=soundEnabled?"🔊 الصوت":"🔇 الصوت مغلق";
 }
 
-/* بدء التطبيق */
+function restart(){
+ stage=0;solved=false;
+ selectedRooms=new Set();
+ barAnswers=[null,null,null,null,null];
+ points=new Set();activeRoom=3;
+ render();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function render(){
+ setProgress();
+ const scenes=[
+ scene0,scene1,scene2,scene3,
+ scene4,scene5,scene6
+ ];
+ $("screen").innerHTML=scenes[stage]();
+ if(stage===4&&points.size===2){
+  solved=true;
+ }
+}
 render();
 </script>
 </body>
