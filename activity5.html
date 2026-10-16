@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة محققو الاحتمالات - النشاط الخامس</title>
+    <!-- استخدام تايليند سي إس إس لتصميم عصري وجذاب -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-amber-50 text-gray-800 min-h-screen p-4 sm:p-8">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-amber-200">
+        <!-- رأس الصفحة -->
+        <div class="bg-gradient-to-r from-amber-500 to-yellow-500 p-6 text-white text-center">
+            <span class="bg-white/20 text-xs px-3 py-1 rounded-full font-bold">برنامج موهبة للرياضيات - الصف الرابع</span>
+            <h1 class="text-3xl font-black mt-2">النشاط الخامس: ما احتمال حدوث شيء ما؟ (How likely?)</h1>
+            <p class="text-amber-100 mt-1">لعبة المحقق الرياضي لتقييم وقياس الاحتمالات[cite: 10]</p>
+        </div>
+
+        <!-- التنقل بين الأقسام -->
+        <div class="flex border-b border-gray-200 bg-amber-50/50">
+            <button onclick="switchTab(1)" id="tab-btn-1" class="flex-1 py-4 font-bold text-amber-700 border-b-4 border-amber-500 bg-white transition">المرحلة الأولى: مقياس الأحداث[cite: 10]</button>
+            <button onclick="switchTab(2)" id="tab-btn-2" class="flex-1 py-4 font-bold text-gray-500 hover:text-amber-700 transition">المرحلة الثانية: محكمة الألغاز[cite: 11]</button>
+        </div>
+
+        <!-- محتوى القسم الأول -->
+        <div id="tab-content-1" class="p-6 sm:p-8 space-y-6">
+            <div class="bg-amber-50 border-r-4 border-amber-500 p-4 rounded-lg">
+                <h2 class="font-bold text-lg text-amber-900">تعليمات المحقق:</h2>
+                <p class="text-sm text-amber-800 mt-1">اختر حدثاً من الأحداث التالية أو اكتب حدثك الخاص، ثم حرك المؤشر لتحديد درجة الاحتمال من ٠ إلى ١٠٠، واعرف التسمية اللفظية الصحيحة للاحتمال[cite: 10].</p>
+            </div>
+
+            <!-- أزرار الأحداث الجاهزة -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button onclick="setEventText('تساقط المطر في الرياض في شهر أغسطس', 5)" class="p-3 text-right bg-white border border-amber-200 rounded-xl hover:bg-amber-100 transition shadow-sm font-semibold">
+                    🌧️ تساقط المطر في الرياض في شهر أغسطس[cite: 10]
+                </button>
+                <button onclick="setEventText('تصل درجة الحرارة في الظهران إلى ٥٠ درجة في يوليو', 15)" class="p-3 text-right bg-white border border-amber-200 rounded-xl hover:bg-amber-100 transition shadow-sm font-semibold">
+                    🌡️ حرارة الظهران ٥٠ درجة في يوليو[cite: 10]
+                </button>
+                <button onclick="setEventText('حصول هشام على هاتف نقال جديد', 50)" class="p-3 text-right bg-white border border-amber-200 rounded-xl hover:bg-amber-100 transition shadow-sm font-semibold">
+                    📱 حصول هشام على هاتف نقال جديد[cite: 10]
+                </button>
+                <button onclick="setEventText('التحاق أخو جابر بإحدى جامعات إنجلترا', 70)" class="p-3 text-right bg-white border border-amber-200 rounded-xl hover:bg-amber-100 transition shadow-sm font-semibold">
+                    🎓 التحاق أخو جابر بإحدى جامعات إنجلترا[cite: 10]
+                </button>
+            </div>
+
+            <!-- صندوق الحدث والمؤشر -->
+            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">الحدث المُختارة:</label>
+                    <input type="text" id="event-input" value="تساقط المطر في الرياض في شهر أغسطس" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none bg-white">
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-gray-700">مقياس الاحتمال (من ٠ إلى ١٠٠):</span>
+                        <span id="score-display" class="bg-amber-500 text-white font-black px-4 py-1 rounded-full text-lg">٥</span>
+                    </div>
+                    <input type="range" id="probability-slider" min="0" max="100" value="5" oninput="updateProbability(this.value)" class="w-full accent-amber-500 cursor-pointer h-2 bg-gray-200 rounded-lg">
+                </div>
+
+                <div class="text-center bg-white p-4 rounded-xl border border-amber-200 shadow-sm">
+                    <span class="text-xs text-gray-500 block">التعبير اللفظي المناسب للاحتمال[cite: 10]:</span>
+                    <span id="probability-term" class="text-xl font-black text-amber-600 mt-1 block">شبه مستحيل / مستبعد</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- محتوى القسم الثاني -->
+        <div id="tab-content-2" class="p-6 sm:p-8 space-y-6 hidden">
+            <div class="bg-amber-50 border-r-4 border-amber-500 p-4 rounded-lg">
+                <h2 class="font-bold text-lg text-amber-900">محكمة الألغاز الخمسة (اختيار ٣ طلاب عشوائياً):</h2>
+                <p class="text-sm text-amber-800 mt-1">اختر التقدير المناسب لكل عبارة من عبارات كتاب الطالب[cite: 11]، واكتشف التبرير الرياضي النموذجي!</p>
+            </div>
+
+            <div class="space-y-4" id="riddles-container">
+                <!-- الألغاز تضاف ديناميكياً عبر JavaScript -->
+            </div>
+        </div>
+
+        <!-- تذييل -->
+        <div class="bg-gray-100 p-4 text-center text-xs text-gray-500 border-t border-gray-200">
+            تم التصميم خصيصاً لمعلمي الموهبة الأذكياء • منصة Microsoft Teams التفاعلية
+        </div>
+    </div>
+
+    <script>
+        // التبديل بين التبويبات
+        function switchTab(tabNumber) {
+            document.getElementById('tab-content-1').classList.toggle('hidden', tabNumber !== 1);
+            document.getElementById('tab-content-2').classList.toggle('hidden', tabNumber !== 2);
+            
+            document.getElementById('tab-btn-1').className = tabNumber === 1 
+                ? 'flex-1 py-4 font-bold text-amber-700 border-b-4 border-amber-500 bg-white transition'
+                : 'flex-1 py-4 font-bold text-gray-500 hover:text-amber-700 transition';
+            document.getElementById('tab-btn-2').className = tabNumber === 2 
+                ? 'flex-1 py-4 font-bold text-amber-700 border-b-4 border-amber-500 bg-white transition'
+                : 'flex-1 py-4 font-bold text-gray-500 hover:text-amber-700 transition';
+        }
+
+        // تحديث قيم المقياس والتسميات اللفظية
+        function updateProbability(val) {
+            document.getElementById('score-display').innerText = val;
+            let term = "";
+            let colorClass = "";
+            
+            if (val == 0) term = "مستحيل (الدرجة صفر)[cite: 10]";
+            else if (val <= 20) term = "شبه مستحيل / مستبعد[cite: 10]";
+            else if (val <= 40) term = "أقل احتمالاً[cite: 10]";
+            else if (val == 50) term = "متساو في إمكانية الحدث (٥٠ درجة)[cite: 10]";
+            else if (val <= 75) term = "أكثر احتمالاً / محتمل[cite: 10]";
+            else if (val < 100) term = "شيد الاحتمال / شبه مؤكد[cite: 10]";
+            else term = "مؤكد (الدرجة ١٠٠)[cite: 10]";
+
+            document.getElementById('probability-term').innerText = term;
+        }
+
+        function setEventText(text, val) {
+            document.getElementById('event-input').value = text;
+            document.getElementById('probability-slider').value = val;
+            updateProbability(val);
+        }
+
+        // أسئلة محكمة الألغاز (الجزء الثاني من النشاط)
+        const riddles = [
+            {
+                id: 1,
+                text: "يزيد طول أطول طالب ١٠ سم على طول أقصر طالب[cite: 11].",
+                hint: "هل تتوقع وجود هذا الفارق البسيط بين 3 طلاب عشوائيين في نفس الصف؟",
+                defaultVal: 70,
+                explanation: "محتمل جداً وقريب للواقع بسبب الفروق الفردية الطبيعية في الصف الرابع."
+            },
+            {
+                id: 2,
+                text: "يقع تاريخ ميلاد كل من الطلاب الثلاثة في الشهر نفسه[cite: 11].",
+                hint: "ما مدى احتمال تطابق أشهر الميلاد لثلاثة أشخاص اختيار عشوائي؟",
+                defaultVal: 15,
+                explanation: "أقل احتمالاً / مستبعد، لأن الأشهر ١٢ موزعة على مدار العام."
+            },
+            {
+                id: 3,
+                text: "لكل طالب من الطلاب الثلاثة أخ واحد على الأقل[cite: 11].",
+                hint: "انظر إلى الواقع الاجتماعي وعائلات الطلاب.",
+                defaultVal: 80,
+                explanation: "شديد الاحتمال لأن الغالبية العظمى من الأسر لديها أكثر من طفل."
+            },
+            {
+                id: 4,
+                text: "عندما يُطلب إليهم اختيار عدد من ١ إلى ١٠، فإنهم جميعاً يختارون عدداً فردياً[cite: 11].",
+                hint: "كم عدد الأعداد الفردية مقابل الزوجية من ١ إلى ١٠؟",
+                defaultVal: 25,
+                explanation: "احتمال ضعيف ولكنه ممكن (النسبة ٥ من ١٠ لكل اختيار)."
+            },
+            {
+                id: 5,
+                text: "عمر أحد الطلاب يزيد خمس سنوات على عمر كل من الطالبين الآخرين[cite: 11].",
+                hint: "فكر: هل يدرس طالب عمره ٥ سنوات إضافية معهم في نفس الصف الرابع؟",
+                defaultVal: 0,
+                explanation: "مستحيل (درجة صفر)، لأن طلاب الصف الرابع يتقاربون في الأعمار (٩-١٠ سنوات عادةً)."
+            }
+        ];
+
+        // بناء محتوى الألغاز ديناميكياً
+        const container = document.getElementById('riddles-container');
+        riddles.forEach(r => {
+            const card = document.createElement('div');
+            card.className = "bg-white p-5 rounded-xl border border-amber-200 shadow-sm space-y-3";
+            card.innerHTML = `
+                <div class="flex items-start justify-between">
+                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-1 rounded-full">العبارة رقم ${r.id}</span>
+                    <span class="text-xs text-gray-500">${r.hint}</span>
+                </div>
+                <p class="font-bold text-gray-800 text-lg">${r.text}</p>
+                <div class="flex flex-col sm:flex-row gap-4 items-center bg-gray-50 p-3 rounded-lg">
+                    <div class="w-full sm:w-1/2">
+                        <label class="text-xs font-bold text-gray-600 block mb-1">تقدير الدرجة المقترحة (٠ إلى ١٠٠):</label>
+                        <input type="number" min="0" max="100" value="${r.defaultVal}" id="riddle-val-${r.id}" class="w-full p-2 border rounded-lg font-bold text-center">
+                    </div>
+                    <div class="w-full sm:w-1/2 text-left">
+                        <button onclick="toggleExp(${r.id})" class="bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold px-4 py-2 rounded-lg transition w-full sm:w-auto">
+                            🔍 عرض التبرير الرياضي النموذجي
+                        </button>
+                    </div>
+                </div>
+                <div id="exp-${r.id}" class="hidden bg-amber-50/80 p-3 rounded-lg text-sm text-amber-900 border border-amber-200 mt-2">
+                    <strong>التحليل والتبرير:</strong> ${r.explanation}
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+        function toggleExp(id) {
+            const expDiv = document.getElementById(`exp-${id}`);
+            expDiv.classList.toggle('hidden');
+        }
+
+        // التهيئة الأولية
+        updateProbability(5);
+    </script>
+</body>
+</html>
