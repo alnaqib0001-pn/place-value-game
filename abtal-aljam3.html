@@ -17,7 +17,7 @@
         .arabic-num { font-feature-settings: "cv01"; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between text-gray-800">
+<body class="min-h-screen flex flex-col justify-between text-gray-800" onload="checkAutoLogin()">
 
     <!-- Header -->
     <header class="bg-emerald-600 text-white shadow-md p-4 text-center">
@@ -104,14 +104,14 @@
             <button id="next-question-btn" onclick="nextQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-xl text-lg shadow">السؤال التالي ➡️</button>
         </div>
 
-        <!-- Teacher Dashboard Panel (Real-Time Sync) -->
+        <!-- Teacher Dashboard Panel (Real-Time Sync & Persistent Session) -->
         <div id="teacher-dashboard" class="hidden bg-white rounded-2xl shadow-xl p-6 border-4 border-amber-300">
             <div class="flex justify-between items-center mb-6 border-b pb-4">
                 <div>
                     <h3 class="text-2xl font-bold text-amber-800">لوحة تحكم المعلم (أبطال الجمع)</h3>
                     <p class="text-xs text-gray-500">إشراف: الأستاذ صهيب النقيب</p>
                 </div>
-                <button onclick="showHome()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-bold text-sm">تسجيل خروج</button>
+                <button onclick="teacherLogout()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-bold text-sm">تسجيل خروج</button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -130,7 +130,7 @@
             </div>
 
             <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl mb-6 text-xs text-emerald-800 leading-relaxed">
-                🚀 <strong>تحديث مباشر:</strong> عندما يدخل الطالب من جهازه الخاص، يظهر اسمه وحالته ومرحلته ونسبة إتقانه هنا فوراً وبشكل لحظي أثناء تواجده وحله في الحصة!
+                🚀 <strong>تحديث مباشر:</strong> الجدول أدناه يتحدث تلقائياً وبشكل لحظي عندما يدخل أي طالب من جهازه الخاص ويقوم بحل الأسئلة دون الحاجة لتحديث الصفحة!
             </div>
 
             <h4 class="font-bold text-lg text-gray-800 mb-3">📊 رصد أداء الطلاب لحظياً</h4>
@@ -179,7 +179,6 @@
             appId: "1:123456:web:abcdef"
         };
 
-        // تهيئة فايربيس (إن لم تكن مهيئة مسبقاً)
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
@@ -187,7 +186,6 @@
 
         const TEACHER_SECRET_PIN = '9421'; // رمز المعلم السري والمؤمن
 
-        // تحويل الأرقام الإنجليزية إلى أرقام عربية (٠ ١ ٢ ٣ ٤ ٥ ٦ ٧ ٨ ٩)
         function toArabicNum(num) {
             const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
             return String(num).replace(/\d/g, (d) => arabicNumbers[d]);
@@ -216,18 +214,25 @@
         let activeQuestions = [];
         let studentsDatabase = {};
 
-        // الاستماع للتحديثات السحابية اللحظية من قاعدة البيانات
+        // الاستماع للتحديثات السحابية اللحظية تلقائياً دون الحاجة لتحديث الصفحة
         db.ref('students').on('value', (snapshot) => {
             const data = snapshot.val();
             studentsDatabase = data ? data : {};
             if (!document.getElementById('teacher-dashboard').classList.contains('hidden')) {
                 updateTeacherDashboard();
             }
-            if (currentUser && studentsDatabase[currentUser.safeKey]) {
-                currentUser = studentsDatabase[currentUser.safeKey];
-                document.getElementById('student-stars').innerText = toArabicNum(currentUser.stars || 0);
-            }
         });
+
+        // التحقق من بقاء المعلم مسجلاً للدخول عند تحديث الصفحة
+        function checkAutoLogin() {
+            if (sessionStorage.getItem('teacher_logged_in') === 'true') {
+                hideAll();
+                document.getElementById('teacher-dashboard').classList.remove('hidden');
+                updateTeacherDashboard();
+            } else {
+                showHome();
+            }
+        }
 
         function showHome() {
             hideAll();
@@ -258,6 +263,7 @@
         function verifyTeacher() {
             const pin = document.getElementById('teacher-pin').value.trim();
             if (pin === TEACHER_SECRET_PIN) {
+                sessionStorage.setItem('teacher_logged_in', 'true'); // تثبيت الجلسة عند التحديث
                 hideAll();
                 document.getElementById('teacher-dashboard').classList.remove('hidden');
                 updateTeacherDashboard();
@@ -267,16 +273,21 @@
             }
         }
 
+        function teacherLogout() {
+            sessionStorage.removeItem('teacher_logged_in');
+            showHome();
+        }
+
         function startStudentJourney() {
             const name = document.getElementById('student-name').value.trim();
             if (!name) {
                 alert('الرجاء إدخال اسم الطالب!');
                 return;
             }
-            const safeKey = name.replace(/[.#$\/\[\]]/g, "_"); // مفتاح آمن لقاعدة البيانات
+            const safeKey = name.replace(/[.#$\/\[\]]/g, "_");
             currentUser = { name, safeKey, stars: 0, currentStage: 1, mastery: 0 };
             
-            // رفع بيانات الطالب للسحابة فوراً ليرى المعلم أنه دخل
+            // تسجيل دخول الطالب فوراً للسحابة ليرى المعلم انضمامه
             db.ref('students/' + safeKey).set(currentUser);
 
             hideAll();
@@ -398,7 +409,7 @@
             }
             currentUser.mastery = percentage;
             
-            // تحديث البيانات سحابياً لحظياً لترها في لوحة المعلم فوراً
+            // تحديث تقدم الطالب سحابياً لحظياً
             db.ref('students/' + currentUser.safeKey).set(currentUser);
 
             document.getElementById('game-screen').innerHTML = `
