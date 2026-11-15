@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أبطال الجمع - الصف الثاني الابتدائي | إشراف: المعلم صهيب النقيب</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #f0fdf4; }
+        .arabic-num { font-feature-settings: "cv01"; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-emerald-600 text-white shadow-md p-4 text-center">
+        <h1 class="text-2xl md:text-3xl font-black">🌟 منصة أبطال الجمع 🌟</h1>
+        <p class="text-sm md:text-base mt-1 text-emerald-100">الصف الثاني الابتدائي | الفصل الخامس: جمع الأعداد المكونة من رقمين</p>
+        <p class="text-xs mt-1 bg-emerald-700 inline-block px-3 py-1 rounded-full text-emerald-200">إشراف المعلم: صهيب النقيب</p>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container mx-auto p-4 flex-grow max-w-4xl" id="app-container">
+        <!-- Home / Selection Screen -->
+        <div id="home-screen" class="bg-white rounded-2xl shadow-xl p-6 md:p-10 text-center border-4 border-emerald-200">
+            <h2 class="text-2xl font-bold text-emerald-700 mb-6">مرحباً بك يا بطل الرياضيات! 🚀</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-lg mx-auto">
+                <button onclick="showStudentLogin()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold p-6 rounded-xl shadow-lg text-xl transition transform hover:scale-105 flex flex-col items-center justify-center gap-3">
+                    <span class="text-4xl">🎒</span>
+                    <span>دخول الطلاب (لعب وتحدي)</span>
+                </button>
+                <button onclick="showTeacherLogin()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold p-6 rounded-xl shadow-lg text-xl transition transform hover:scale-105 flex flex-col items-center justify-center gap-3">
+                    <span class="text-4xl">👨‍🏫</span>
+                    <span>لوحة تحكم المعلم</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Student Login Screen -->
+        <div id="student-login-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-10 max-w-md mx-auto border-4 border-emerald-200 text-center">
+            <h3 class="text-2xl font-bold text-emerald-700 mb-4">تسجيل دخول الطالب</h3>
+            <p class="text-gray-600 mb-6 text-sm">أدخل اسمك الثنائي ورمز الجلسة المعطى من الأستاذ صهيب النقيب</p>
+            <input type="text" id="student-name" placeholder="اكتب اسمك الثلاثي هنا..." class="w-full p-3 mb-4 border-2 border-emerald-300 rounded-xl text-center text-lg focus:outline-none focus:border-emerald-600">
+            <input type="text" id="session-code" placeholder="رمز الجلسة (مثال: 1234)" class="w-full p-3 mb-6 border-2 border-emerald-300 rounded-xl text-center text-lg focus:outline-none focus:border-emerald-600">
+            <div class="flex gap-4">
+                <button onclick="startStudentJourney()" class="flex-grow bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-lg shadow">دخول للمراحل 🚀</button>
+                <button onclick="showHome()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold px-4 py-3 rounded-xl">رجوع</button>
+            </div>
+        </div>
+
+        <!-- Teacher Login Screen -->
+        <div id="teacher-login-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-10 max-w-md mx-auto border-4 border-amber-200 text-center">
+            <h3 class="text-2xl font-bold text-amber-700 mb-4">تسجيل دخول المعلم</h3>
+            <p class="text-gray-600 mb-6 text-sm">أدخل كلمة المرور الخاصة بلوحة التحكم</p>
+            <input type="password" id="teacher-pin" placeholder="كلمة المرور (1234)" class="w-full p-3 mb-6 border-2 border-amber-300 rounded-xl text-center text-lg focus:outline-none focus:border-amber-600">
+            <div class="flex gap-4">
+                <button onclick="verifyTeacher()" class="flex-grow bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl text-lg shadow">فتح لوحة التحكم ⚙️</button>
+                <button onclick="showHome()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold px-4 py-3 rounded-xl">رجوع</button>
+            </div>
+        </div>
+
+        <!-- Student Dashboard / Stages Map -->
+        <div id="student-dashboard" class="hidden">
+            <div class="bg-white rounded-2xl shadow-md p-4 mb-6 flex justify-between items-center border-2 border-emerald-200">
+                <div>
+                    <h3 id="welcome-student-name" class="font-bold text-lg text-emerald-800">مرحباً بالبطل</h3>
+                    <p class="text-xs text-gray-500">اختر المرحلة المفتوحة وابدأ التحدي</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="bg-yellow-100 text-yellow-800 font-bold px-3 py-1 rounded-full text-sm">⭐ النجوم: <span id="student-stars">0</span></span>
+                    <button onclick="showHome()" class="bg-red-100 text-red-600 px-3 py-1 rounded-lg text-sm font-bold">خروج</button>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold text-emerald-800 mb-4 text-center">🗺️ خريطة مراحل الفصل الخامس (من ص ١٠٩ إلى ص ١٣٢)</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="stages-grid">
+                <!-- Dynamically populated stages -->
+            </div>
+        </div>
+
+        <!-- Game Active Screen -->
+        <div id="game-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 text-center border-4 border-emerald-300">
+            <div class="flex justify-between items-center mb-6">
+                <button onclick="backToMap()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-bold text-sm">⬅️ العودة للخريطة</button>
+                <span id="game-title" class="font-bold text-emerald-700 text-lg">اسم المرحلة</span>
+                <span id="question-counter" class="text-sm font-semibold text-gray-500">السؤال 1 / 5</span>
+            </div>
+            
+            <div id="question-box" class="mb-8">
+                <!-- Question content -->
+            </div>
+
+            <div id="options-box" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto mb-6">
+                <!-- Options buttons -->
+            </div>
+
+            <div id="feedback-box" class="text-lg font-bold mb-4"></div>
+            <button id="next-question-btn" onclick="nextQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-xl text-lg shadow">السؤال التالي ➡️</button>
+        </div>
+
+        <!-- Teacher Dashboard Panel -->
+        <div id="teacher-dashboard" class="hidden bg-white rounded-2xl shadow-xl p-6 border-4 border-amber-300">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <div>
+                    <h3 class="text-2xl font-bold text-amber-800">لوحة تحكم المعلم (أبطال الجمع)</h3>
+                    <p class="text-xs text-gray-500">إشراف: الأستاذ صهيب النقيب</p>
+                </div>
+                <button onclick="showHome()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-bold text-sm">تسجيل خروج</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-center">
+                    <p class="text-sm text-gray-600">الطلاب المسجلون</p>
+                    <p id="stat-total-students" class="text-2xl font-bold text-emerald-700">0</p>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center">
+                    <p class="text-sm text-gray-600">متوسط الإتقان العام</p>
+                    <p id="stat-avg-mastery" class="text-2xl font-bold text-blue-700">٠٪</p>
+                </div>
+                <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-center">
+                    <p class="text-sm text-gray-600">رمز الجلسة النشط</p>
+                    <p class="text-2xl font-bold text-amber-700 arabic-num">١٢٣٤</p>
+                </div>
+            </div>
+
+            <h4 class="font-bold text-lg text-gray-800 mb-3">📊 تقارير الطلاب اللحظية</h4>
+            <div class="overflow-x-auto mb-6">
+                <table class="w-full text-right border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 border-b">
+                            <th class="p-3">اسم الطالب</th>
+                            <th class="p-3">المرحلة الحالية</th>
+                            <th class="p-3">النجوم</th>
+                            <th class="p-3">نسبة الإتقان</th>
+                            <th class="p-3">الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-table-body">
+                        <tr>
+                            <td colspan="5" class="p-4 text-center text-gray-500">لا يوجد طلاب متصلون حالياً. شارك رابط المنصة مع طلابك عبر التيمز!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex gap-4">
+                <button onclick="exportReportCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl shadow text-sm">📥 تصدير النتائج (CSV/Excel)</button>
+                <button onclick="resetClassroomData()" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-4 py-2.5 rounded-xl text-sm border border-red-200">إعادة ضبط البيانات</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-emerald-800 text-emerald-200 text-center py-4 text-sm mt-8">
+        جميع الحقوق محفوظة © 2026 | تصميم وتنفيذ منصة أبطال الجمع بإشراف المعلم صهيب النقيب
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        const stagesData = [
+            { id: 1, title: "١. التهيئة (ص١٠٩)", desc: "مراجعة الجمع الأساسية", unlocked: true },
+            { id: 2, title: "٢. جمع العشرات (ص١١٠)", desc: "جمع مضفات العشرة بدقة", unlocked: false },
+            { id: 3, title: "٣. الجمع بالعد التصاعدي (ص١١٢)", desc: "العد التصاعدي للناتج السريع", unlocked: false },
+            { id: 4, title: "٤. أحل المسائل: أحل عكسيًا (ص١١٤)", desc: "مهارات التفكير العكسي", unlocked: false },
+            { id: 5, title: "٥. جمع عدد من رقمين إلى رقم أو رقمين (ص١١٦)", desc: "الجمع الرأسي والأفقي", unlocked: false },
+            { id: 6, title: "٦. الجمع بإعادة التجميع (ص١١٨)", desc: "فهم الآحاد والعشرات الجديدة", unlocked: false },
+            { id: 7, title: "٧. اختبار منتصف الفصل (ص١٢٠)", desc: "تقويم شامل للمهارات السابقة", unlocked: false },
+            { id: 8, title: "٨. جمع عدد من رقمين إلى رقم بإعادة التجميع (ص١٢٢)", desc: "إعادة التجميع للآحاد", unlocked: false },
+            { id: 9, title: "٩. جمع عددين مكونين من رقمين بإعادة التجميع (ص١٢٤)", desc: "الجمع المتقدم بإعادة التجميع", unlocked: false },
+            { id: 10, title: "١٠. تقدير ناتج الجمع (ص١٢٦)", desc: "التقريب والتقدير السريع", unlocked: false },
+            { id: 11, title: "١١. جمع ثلاثة أعداد كل منها مكون من رقمين (ص١٢٨)", desc: "تحدي جمع الثلاثة أعداد", unlocked: false },
+            { id: 12, title: "١٢. استقصاء حل المسألة: أختار خطة مناسبة (ص١٣٠)", desc: "اختيار خطة الحل الذكية", unlocked: false },
+            { id: 13, title: "١٣. اختبار الفصل النهائي (ص١٣٢)", desc: "اختبار إتقان الفصل الخامس كاملًا", unlocked: false }
+        ];
+
+        let currentUser = null;
+        let currentStageId = null;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let activeQuestions = [];
+        let studentsDatabase = JSON.parse(localStorage.getItem('abtal_students')) || [];
+
+        function showHome() {
+            hideAll();
+            document.getElementById('home-screen').classList.remove('hidden');
+        }
+
+        function showStudentLogin() {
+            hideAll();
+            document.getElementById('student-login-screen').classList.remove('hidden');
+        }
+
+        function showTeacherLogin() {
+            hideAll();
+            document.getElementById('teacher-login-screen').classList.remove('hidden');
+        }
+
+        function hideAll() {
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('student-login-screen').classList.add('hidden');
+            document.getElementById('teacher-login-screen').classList.add('hidden');
+            document.getElementById('student-dashboard').classList.add('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('teacher-dashboard').classList.add('hidden');
+        }
+
+        function verifyTeacher() {
+            const pin = document.getElementById('teacher-pin').value;
+            if (pin === '1234') {
+                hideAll();
+                document.getElementById('teacher-dashboard').classList.remove('hidden');
+                updateTeacherDashboard();
+            } else {
+                alert('كلمة المرور غير صحيحة. كلمة المرور الافتراضية هي: 1234');
+            }
+        }
+
+        function startStudentJourney() {
+            const name = document.getElementById('student-name').value.trim();
+            const code = document.getElementById('session-code').value.trim();
+            if (!name) {
+                alert('الرجاء إدخال اسم الطالب!');
+                return;
+            }
+            currentUser = { name, stars: 0, currentStage: 1, mastery: 0 };
+            let existing = studentsDatabase.find(s => s.name === name);
+            if (!existing) {
+                studentsDatabase.push(currentUser);
+                localStorage.setItem('abtal_students', JSON.stringify(studentsDatabase));
+            } else {
+                currentUser = existing;
+            }
+
+            hideAll();
+            document.getElementById('student-dashboard').classList.remove('hidden');
+            document.getElementById('welcome-student-name').innerText = `مرحباً بالبطل: ${currentUser.name}`;
+            document.getElementById('student-stars').innerText = currentUser.stars;
+            renderStagesMap();
+        }
+
+        function renderStagesMap() {
+            const grid = document.getElementById('stages-grid');
+            grid.innerHTML = '';
+            stagesData.forEach(stage => {
+                const isUnlocked = stage.id <= currentUser.currentStage;
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-xl border-2 transition text-center flex flex-col justify-between ${isUnlocked ? 'bg-emerald-50 border-emerald-300 cursor-pointer hover:bg-emerald-100' : 'bg-gray-100 border-gray-300 opacity-60 cursor-not-allowed'}`;
+                card.innerHTML = `
+                    <div>
+                        <span class="text-2xl">${isUnlocked ? '🎮' : '🔒'}</span>
+                        <h4 class="font-bold text-gray-800 mt-2 text-sm">${stage.title}</h4>
+                        <p class="text-xs text-gray-600 mt-1">${stage.desc}</p>
+                    </div>
+                    <button class="mt-3 py-1.5 px-3 rounded-lg text-xs font-bold ${isUnlocked ? 'bg-emerald-600 text-white' : 'bg-gray-300 text-gray-600'}" ${!isUnlocked ? 'disabled' : ''} onclick="startStage(${stage.id})">
+                        ${isUnlocked ? 'ابدأ اللعب والتحدي' : 'مغلقة'}
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function startStage(stageId) {
+            currentStageId = stageId;
+            currentQuestionIndex = 0;
+            score = 0;
+            activeQuestions = generateStageQuestions(stageId);
+            hideAll();
+            document.getElementById('game-screen').classList.remove('hidden');
+            document.getElementById('game-title').innerText = stagesData.find(s => s.id === stageId).title;
+            loadQuestion();
+        }
+
+        function backToMap() {
+            hideAll();
+            document.getElementById('student-dashboard').classList.remove('hidden');
+            renderStagesMap();
+        }
+
+        function generateStageQuestions(stageId) {
+            let qList = [];
+            for (let i = 0; i < 5; i++) {
+                let n1 = Math.floor(Math.random() * 40) + 12;
+                let n2 = Math.floor(Math.random() * 35) + 10;
+                let ans = n1 + n2;
+                
+                let opts = [ans, ans + 2, ans - 1 > 0 ? ans - 1 : ans + 3, ans + 5];
+                opts.sort(() => Math.random() - 0.5);
+
+                qList.push({
+                    question: `ما هو ناتج الجمع الآتي: ${n1} + ${n2} ؟`,
+                    options: opts,
+                    correct: ans
+                });
+            }
+            return qList;
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= activeQuestions.length) {
+                finishStage();
+                return;
+            }
+            let q = activeQuestions[currentQuestionIndex];
+            document.getElementById('question-counter').innerText = `السؤال ${currentQuestionIndex + 1} / 5`;
+            document.getElementById('question-box').innerHTML = `<p class="text-2xl font-black text-emerald-800">${q.question}</p>`;
+            
+            let optsBox = document.getElementById('options-box');
+            optsBox.innerHTML = '';
+            q.options.forEach(opt => {
+                let btn = document.createElement('button');
+                btn.className = 'p-4 bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-300 rounded-xl text-xl font-bold text-emerald-900 transition shadow-sm';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt, q.correct);
+                optsBox.appendChild(btn);
+            });
+            document.getElementById('feedback-box').innerText = '';
+            document.getElementById('next-question-btn').classList.add('hidden');
+        }
+
+        function checkAnswer(selected, correct) {
+            let feedback = document.getElementById('feedback-box');
+            let optsBox = document.getElementById('options-box');
+            Array.from(optsBox.children).forEach(btn => btn.disabled = true);
+
+            if (selected === correct) {
+                feedback.innerHTML = '<span class="text-emerald-600">🎉 إجابة صحيحة يا بطل! أحسنت</span>';
+                score++;
+            } else {
+                feedback.innerHTML = `<span class="text-red-500">❌ إجابة خاطئة. الإجابة الصحيحة هي: ${correct}</span>`;
+            }
+            document.getElementById('next-question-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function finishStage() {
+            let percentage = (score / 5) * 100;
+            let feedbackMsg = "";
+            if (percentage >= 80) {
+                feedbackMsg = `🌟 مبروك! حققت نسبة إتقان ${percentage}%. تم فتح المرحلة التالية!`;
+                currentUser.stars += 10;
+                if (currentUser.currentStage <= currentStageId && currentUser.currentStage < 13) {
+                    currentUser.currentStage++;
+                }
+            } else {
+                feedbackMsg = `⚠️ نسبة الإتقان ${percentage}%. تحتاج إلى 80% على الأقل لاجتياز المرحلة. حاول مرة أخرى!`;
+            }
+            currentUser.mastery = percentage;
+            
+            let idx = studentsDatabase.findIndex(s => s.name === currentUser.name);
+            if (idx !== -1) studentsDatabase[idx] = currentUser;
+            localStorage.setItem('abtal_students', JSON.stringify(studentsDatabase));
+
+            document.getElementById('game-screen').innerHTML = `
+                <div class="text-center py-8">
+                    <h3 class="text-3xl font-bold text-emerald-700 mb-4">انتهت المرحلة!</h3>
+                    <p class="text-xl mb-6 text-gray-700">${feedbackMsg}</p>
+                    <button onclick="startStudentJourney()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-lg shadow">العودة لخريطة المراحل 🗺️</button>
+                </div>
+            `;
+        }
+
+        function updateTeacherDashboard() {
+            document.getElementById('stat-total-students').innerText = studentsDatabase.length;
+            let tbody = document.getElementById('students-table-body');
+            if (studentsDatabase.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">لا يوجد طلاب متصلون حالياً.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = '';
+            let totalMastery = 0;
+            studentsDatabase.forEach(st => {
+                totalMastery += (st.mastery || 0);
+                let tr = document.createElement('tr');
+                tr.className = 'border-b hover:bg-gray-50';
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold">${st.name}</td>
+                    <td class="p-3">المرحلة ${st.currentStage}</td>
+                    <td class="p-3">⭐ ${st.stars}</td>
+                    <td class="p-3 font-bold text-emerald-700">${st.mastery || 0}%</td>
+                    <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${(st.mastery || 0) >= 80 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${(st.mastery || 0) >= 80 ? 'أتقن' : 'قيد التقدم'}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('stat-avg-mastery').innerText = Math.round(totalMastery / studentsDatabase.length) + '٪';
+        }
+
+        function exportReportCSV() {
+            let csv = 'اسم الطالب,المرحلة الحالية,النجوم,نسبة الإتقان\n';
+            studentsDatabase.forEach(st => {
+                csv += `${st.name},${st.currentStage},${st.stars},${st.mastery || 0}%\n`;
+            });
+            let blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = 'abtal_aljam3_report.csv';
+            a.click();
+        }
+
+        function resetClassroomData() {
+            if (confirm('هل أنت متأكد من مسح بيانات الطلاب؟')) {
+                localStorage.removeItem('abtal_students');
+                studentsDatabase = [];
+                updateTeacherDashboard();
+            }
+        }
+    </script>
+</body>
+</html>
