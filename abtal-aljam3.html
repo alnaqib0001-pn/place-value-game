@@ -38,23 +38,22 @@
             </div>
         </div>
 
-        <!-- Student Login Screen -->
+        <!-- Student Login Screen (Simplified: Name only, no session code) -->
         <div id="student-login-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-10 max-w-md mx-auto border-4 border-emerald-200 text-center">
             <h3 class="text-2xl font-bold text-emerald-700 mb-4">تسجيل دخول الطالب</h3>
-            <p class="text-gray-600 mb-6 text-sm">أدخل اسمك الثنائي ورمز الجلسة المعطى من الأستاذ صهيب النقيب</p>
-            <input type="text" id="student-name" placeholder="اكتب اسمك الثلاثي هنا..." class="w-full p-3 mb-4 border-2 border-emerald-300 rounded-xl text-center text-lg focus:outline-none focus:border-emerald-600">
-            <input type="text" id="session-code" placeholder="رمز الجلسة (مثال: 1234)" class="w-full p-3 mb-6 border-2 border-emerald-300 rounded-xl text-center text-lg focus:outline-none focus:border-emerald-600">
+            <p class="text-gray-600 mb-6 text-sm">اكتب اسمك الثنائي أو الثلاثي للبدء في رحلة أبطال الجمع</p>
+            <input type="text" id="student-name" placeholder="اكتب اسمك هنا..." class="w-full p-3 mb-6 border-2 border-emerald-300 rounded-xl text-center text-lg focus:outline-none focus:border-emerald-600">
             <div class="flex gap-4">
                 <button onclick="startStudentJourney()" class="flex-grow bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-lg shadow">دخول للمراحل 🚀</button>
                 <button onclick="showHome()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold px-4 py-3 rounded-xl">رجوع</button>
             </div>
         </div>
 
-        <!-- Teacher Login Screen (Secure & Clean) -->
+        <!-- Teacher Login Screen (Secure PIN) -->
         <div id="teacher-login-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-10 max-w-md mx-auto border-4 border-amber-200 text-center">
             <h3 class="text-2xl font-bold text-amber-700 mb-4">تسجيل دخول المعلم</h3>
-            <p class="text-gray-600 mb-6 text-sm">أدخل كلمة المرور الخاصة بلوحة التحكم (خاص بالمعلم فقط)</p>
-            <input type="password" id="teacher-pin" placeholder="أدخل كلمة المرور السرية..." class="w-full p-3 mb-6 border-2 border-amber-300 rounded-xl text-center text-lg focus:outline-none focus:border-amber-600">
+            <p class="text-gray-600 mb-6 text-sm">أدخل كلمة المرور السرية الخاصة بلوحة التحكم</p>
+            <input type="password" id="teacher-pin" placeholder="أدخل كلمة المرور..." class="w-full p-3 mb-6 border-2 border-amber-300 rounded-xl text-center text-lg focus:outline-none focus:border-amber-600">
             <div class="flex gap-4">
                 <button onclick="verifyTeacher()" class="flex-grow bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl text-lg shadow">فتح لوحة التحكم ⚙️</button>
                 <button onclick="showHome()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold px-4 py-3 rounded-xl">رجوع</button>
@@ -69,7 +68,7 @@
                     <p class="text-xs text-gray-500">اختر المرحلة المفتوحة وابدأ التحدي</p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <span class="bg-yellow-100 text-yellow-800 font-bold px-3 py-1 rounded-full text-sm">⭐ النجوم: <span id="student-stars">0</span></span>
+                    <span class="bg-yellow-100 text-yellow-800 font-bold px-3 py-1 rounded-full text-sm arabic-num">⭐ النجوم: <span id="student-stars">٠</span></span>
                     <button onclick="showHome()" class="bg-red-100 text-red-600 px-3 py-1 rounded-lg text-sm font-bold">خروج</button>
                 </div>
             </div>
@@ -85,7 +84,7 @@
             <div class="flex justify-between items-center mb-6">
                 <button onclick="backToMap()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-bold text-sm">⬅️ العودة للخريطة</button>
                 <span id="game-title" class="font-bold text-emerald-700 text-lg">اسم المرحلة</span>
-                <span id="question-counter" class="text-sm font-semibold text-gray-500">السؤال 1 / 5</span>
+                <span id="question-counter" class="text-sm font-semibold text-gray-500 arabic-num">السؤال ١ من ٥</span>
             </div>
             
             <div id="question-box" class="mb-8">
@@ -112,20 +111,24 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-center">
-                    <p class="text-sm text-gray-600">الطلاب المسجلون</p>
-                    <p id="stat-total-students" class="text-2xl font-bold text-emerald-700">0</p>
+                    <p class="text-sm text-gray-600">سجلات الطلاب المحفوظة محلياً</p>
+                    <p id="stat-total-students" class="text-2xl font-bold text-emerald-700 arabic-num">٠</p>
                 </div>
                 <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center">
                     <p class="text-sm text-gray-600">متوسط الإتقان العام</p>
-                    <p id="stat-avg-mastery" class="text-2xl font-bold text-blue-700">٠٪</p>
+                    <p id="stat-avg-mastery" class="text-2xl font-bold text-blue-700 arabic-num">٠٪</p>
                 </div>
                 <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-center">
-                    <p class="text-sm text-gray-600">حالة الحماية</p>
+                    <p class="text-sm text-gray-600">حالة الحماية والأمان</p>
                     <p class="text-lg font-bold text-emerald-700">مؤمنة بالكامل 🔒</p>
                 </div>
             </div>
 
-            <h4 class="font-bold text-lg text-gray-800 mb-3">📊 تقارير الطلاب اللحظية</h4>
+            <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl mb-6 text-xs text-amber-800 leading-relaxed">
+                📌 <strong>توضيح تربوي وتقني:</strong> نظراً لأن المنصة تعمل كتطبيق ويب تفاعلي مستقل على صفحات الستاتيك (GitHub Pages)، فإن كل طالب يلعب على جهازه الخاص، ويتم حفظ بياناته وتقدمه محلياً. تتيح لك هذه اللوحة استعراض التقارير والنتائج المحفوظة وتصديرها بملف Excel متى شئت.
+            </div>
+
+            <h4 class="font-bold text-lg text-gray-800 mb-3">📊 سجلات أداء الطلاب</h4>
             <div class="overflow-x-auto mb-6">
                 <table class="w-full text-right border-collapse">
                     <thead>
@@ -139,7 +142,7 @@
                     </thead>
                     <tbody id="students-table-body">
                         <tr>
-                            <td colspan="5" class="p-4 text-center text-gray-500">لا يوجد طلاب متصلون حالياً. شارك رابط المنصة مع طلابك عبر التيمز!</td>
+                            <td colspan="5" class="p-4 text-center text-gray-500">لا توجد سجلات مسجلة حتى الآن.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -155,28 +158,33 @@
 
     <!-- Footer -->
     <footer class="bg-emerald-800 text-emerald-200 text-center py-4 text-sm mt-8">
-        جميع الحقوق محفوظة © 2026 | تصميم وتنفيذ منصة أبطال الجمع بإشراف المعلم صهيب النقيب
+        جميع الحقوق محفوظة © ٢٠٢٦ | تصميم وتنفيذ منصة أبطال الجمع بإشراف المعلم صهيب النقيب
     </footer>
 
     <!-- JavaScript Application Logic -->
     <script>
-        // الرقم السري الجديد الخاص بك (يمكنك تغييره هنا مستقبلاً بين علامتي التنصيص)
-        const TEACHER_SECRET_PIN = '9421';
+        const TEACHER_SECRET_PIN = '9421'; // رمز دخول المعلم السري والمؤمن
+
+        // تحويل الأرقام الإنجليزية إلى أرقام عربية (٠ ١ ٢ ٣ ٤ ٥ ٦ ٧ ٨ ٩)
+        function toArabicNum(num) {
+            const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+            return String(num).replace(/\d/g, (d) => arabicNumbers[d]);
+        }
 
         const stagesData = [
-            { id: 1, title: "١. التهيئة (ص١٠٩)", desc: "مراجعة الجمع الأساسية", unlocked: true },
-            { id: 2, title: "٢. جمع العشرات (ص١١٠)", desc: "جمع مضفات العشرة بدقة", unlocked: false },
-            { id: 3, title: "٣. الجمع بالعد التصاعدي (ص١١٢)", desc: "العد التصاعدي للناتج السريع", unlocked: false },
-            { id: 4, title: "٤. أحل المسائل: أحل عكسيًا (ص١١٤)", desc: "مهارات التفكير العكسي", unlocked: false },
-            { id: 5, title: "٥. جمع عدد من رقمين إلى رقم أو رقمين (ص١١٦)", desc: "الجمع الرأسي والأفقي", unlocked: false },
-            { id: 6, title: "٦. الجمع بإعادة التجميع (ص١١٨)", desc: "فهم الآحاد والعشرات الجديدة", unlocked: false },
-            { id: 7, title: "٧. اختبار منتصف الفصل (ص١٢٠)", desc: "تقويم شامل للمهارات السابقة", unlocked: false },
-            { id: 8, title: "٨. جمع عدد من رقمين إلى رقم بإعادة التجميع (ص١٢٢)", desc: "إعادة التجميع للآحاد", unlocked: false },
-            { id: 9, title: "٩. جمع عددين مكونين من رقمين بإعادة التجميع (ص١٢٤)", desc: "الجمع المتقدم بإعادة التجميع", unlocked: false },
-            { id: 10, title: "١٠. تقدير ناتج الجمع (ص١٢٦)", desc: "التقريب والتقدير السريع", unlocked: false },
-            { id: 11, title: "١١. جمع ثلاثة أعداد كل منها مكون من رقمين (ص١٢٨)", desc: "تحدي جمع الثلاثة أعداد", unlocked: false },
-            { id: 12, title: "١٢. استقصاء حل المسألة: أختار خطة مناسبة (ص١٣٠)", desc: "اختيار خطة الحل الذكية", unlocked: false },
-            { id: 13, title: "١٣. اختبار الفصل النهائي (ص١٣٢)", desc: "اختبار إتقان الفصل الخامس كاملًا", unlocked: false }
+            { id: 1, title: "١. التهيئة (ص ١٠٩)", desc: "مراجعة الجمع الأساسية", unlocked: true },
+            { id: 2, title: "٢. جمع العشرات (ص ١١٠)", desc: "جمع مضاعفات العشرة بدقة", unlocked: false },
+            { id: 3, title: "٣. الجمع بالعد التصاعدي (ص ١١٢)", desc: "العد التصاعدي للناتج السريع", unlocked: false },
+            { id: 4, title: "٤. أحل المسائل: أحل عكسيًا (ص ١١٤)", desc: "مهارات التفكير العكسي", unlocked: false },
+            { id: 5, title: "٥. جمع عدد من رقمين إلى رقم أو رقمين (ص ١١٦)", desc: "الجمع الرأسي والأفقي البسيط", unlocked: false },
+            { id: 6, title: "٦. الجمع بإعادة التجميع (ص ١١٨)", desc: "فهم الآحاد والعشرات الجديدة", unlocked: false },
+            { id: 7, title: "٧. اختبار منتصف الفصل (ص ١٢٠)", desc: "تقويم شامل للمهارات السابقة", unlocked: false },
+            { id: 8, title: "٨. جمع عدد من رقمين إلى رقم بإعادة التجميع (ص ١٢٢)", desc: "إعادة التجميع للآحاد", unlocked: false },
+            { id: 9, title: "٩. جمع عددين مكونين من رقمين بإعادة التجميع (ص ١٢٤)", desc: "الجمع المتقدم بإعادة التجميع", unlocked: false },
+            { id: 10, title: "١٠. تقدير ناتج الجمع (ص ١٢٦)", desc: "التقريب والتقدير السريع", unlocked: false },
+            { id: 11, title: "١١. جمع ثلاثة أعداد كل منها مكون من رقمين (ص ١٢٨)", desc: "تحدي جمع الثلاثة أعداد", unlocked: false },
+            { id: 12, title: "١٢. استقصاء حل المسألة: أختار خطة مناسبة (ص ١٣٠)", desc: "اختيار خطة الحل الذكية", unlocked: false },
+            { id: 13, title: "١٣. اختبار الفصل النهائي (ص ١٣٢)", desc: "اختبار إتقان الفصل الخامس كاملًا", unlocked: false }
         ];
 
         let currentUser = null;
@@ -193,12 +201,13 @@
 
         function showStudentLogin() {
             hideAll();
+            document.getElementById('student-name').value = '';
             document.getElementById('student-login-screen').classList.remove('hidden');
         }
 
         function showTeacherLogin() {
             hideAll();
-            document.getElementById('teacher-pin').value = ''; // تنظيف الحقل أماناً
+            document.getElementById('teacher-pin').value = '';
             document.getElementById('teacher-login-screen').classList.remove('hidden');
         }
 
@@ -225,7 +234,6 @@
 
         function startStudentJourney() {
             const name = document.getElementById('student-name').value.trim();
-            const code = document.getElementById('session-code').value.trim();
             if (!name) {
                 alert('الرجاء إدخال اسم الطالب!');
                 return;
@@ -242,7 +250,7 @@
             hideAll();
             document.getElementById('student-dashboard').classList.remove('hidden');
             document.getElementById('welcome-student-name').innerText = `مرحباً بالبطل: ${currentUser.name}`;
-            document.getElementById('student-stars').innerText = currentUser.stars;
+            document.getElementById('student-stars').innerText = toArabicNum(currentUser.stars);
             renderStagesMap();
         }
 
@@ -287,15 +295,16 @@
         function generateStageQuestions(stageId) {
             let qList = [];
             for (let i = 0; i < 5; i++) {
-                let n1 = Math.floor(Math.random() * 40) + 12;
-                let n2 = Math.floor(Math.random() * 35) + 10;
+                // أرقام بسيطة ومناسبة للصف الثاني الابتدائي (أعداد مكونة من رقمين)
+                let n1 = Math.floor(Math.random() * 30) + 11;
+                let n2 = Math.floor(Math.random() * 25) + 10;
                 let ans = n1 + n2;
                 
-                let opts = [ans, ans + 2, ans - 1 > 0 ? ans - 1 : ans + 3, ans + 5];
+                let opts = [ans, ans + 2, ans - 1 > 0 ? ans - 1 : ans + 3, ans + 4];
                 opts.sort(() => Math.random() - 0.5);
 
                 qList.push({
-                    question: `ما هو ناتج الجمع الآتي: ${n1} + ${n2} ؟`,
+                    question: `ما هو ناتج الجمع الآتي: ${toArabicNum(n1)} + ${toArabicNum(n2)} ؟`,
                     options: opts,
                     correct: ans
                 });
@@ -309,15 +318,15 @@
                 return;
             }
             let q = activeQuestions[currentQuestionIndex];
-            document.getElementById('question-counter').innerText = `السؤال ${currentQuestionIndex + 1} / 5`;
-            document.getElementById('question-box').innerHTML = `<p class="text-2xl font-black text-emerald-800">${q.question}</p>`;
+            document.getElementById('question-counter').innerText = `السؤال ${toArabicNum(currentQuestionIndex + 1)} من ٥`;
+            document.getElementById('question-box').innerHTML = `<p class="text-2xl font-black text-emerald-800 arabic-num">${q.question}</p>`;
             
             let optsBox = document.getElementById('options-box');
             optsBox.innerHTML = '';
             q.options.forEach(opt => {
                 let btn = document.createElement('button');
-                btn.className = 'p-4 bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-300 rounded-xl text-xl font-bold text-emerald-900 transition shadow-sm';
-                btn.innerText = opt;
+                btn.className = 'p-4 bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-300 rounded-xl text-xl font-bold text-emerald-900 transition shadow-sm arabic-num';
+                btn.innerText = toArabicNum(opt);
                 btn.onclick = () => checkAnswer(opt, q.correct);
                 optsBox.appendChild(btn);
             });
@@ -334,7 +343,7 @@
                 feedback.innerHTML = '<span class="text-emerald-600">🎉 إجابة صحيحة يا بطل! أحسنت</span>';
                 score++;
             } else {
-                feedback.innerHTML = `<span class="text-red-500">❌ إجابة خاطئة. الإجابة الصحيحة هي: ${correct}</span>`;
+                feedback.innerHTML = `<span class="text-red-500">❌ إجابة خاطئة. الإجابة الصحيحة هي: ${toArabicNum(correct)}</span>`;
             }
             document.getElementById('next-question-btn').classList.remove('hidden');
         }
@@ -348,13 +357,13 @@
             let percentage = (score / 5) * 100;
             let feedbackMsg = "";
             if (percentage >= 80) {
-                feedbackMsg = `🌟 مبروك! حققت نسبة إتقان ${percentage}%. تم فتح المرحلة التالية!`;
+                feedbackMsg = `🌟 مبروك! حققت نسبة إتقان ${toArabicNum(percentage)}٪. تم فتح المرحلة التالية!`;
                 currentUser.stars += 10;
                 if (currentUser.currentStage <= currentStageId && currentUser.currentStage < 13) {
                     currentUser.currentStage++;
                 }
             } else {
-                feedbackMsg = `⚠️ نسبة الإتقان ${percentage}%. تحتاج إلى 80% على الأقل لاجتياز المرحلة. حاول مرة أخرى!`;
+                feedbackMsg = `⚠️ نسبة الإتقان ${toArabicNum(percentage)}٪. تحتاج إلى ٨٠٪ على الأقل لاجتياز المرحلة. حاول مرة أخرى!`;
             }
             currentUser.mastery = percentage;
             
@@ -365,17 +374,17 @@
             document.getElementById('game-screen').innerHTML = `
                 <div class="text-center py-8">
                     <h3 class="text-3xl font-bold text-emerald-700 mb-4">انتهت المرحلة!</h3>
-                    <p class="text-xl mb-6 text-gray-700">${feedbackMsg}</p>
+                    <p class="text-xl mb-6 text-gray-700 arabic-num">${feedbackMsg}</p>
                     <button onclick="startStudentJourney()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-lg shadow">العودة لخريطة المراحل 🗺️</button>
                 </div>
             `;
         }
 
         function updateTeacherDashboard() {
-            document.getElementById('stat-total-students').innerText = studentsDatabase.length;
+            document.getElementById('stat-total-students').innerText = toArabicNum(studentsDatabase.length);
             let tbody = document.getElementById('students-table-body');
             if (studentsDatabase.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">لا يوجد طلاب متصلون حالياً.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">لا توجد سجلات مسجلة حتى الآن.</td></tr>`;
                 return;
             }
             tbody.innerHTML = '';
@@ -386,14 +395,14 @@
                 tr.className = 'border-b hover:bg-gray-50';
                 tr.innerHTML = `
                     <td class="p-3 font-semibold">${st.name}</td>
-                    <td class="p-3">المرحلة ${st.currentStage}</td>
-                    <td class="p-3">⭐ ${st.stars}</td>
-                    <td class="p-3 font-bold text-emerald-700">${st.mastery || 0}%</td>
+                    <td class="p-3 arabic-num">المرحلة ${toArabicNum(st.currentStage)}</td>
+                    <td class="p-3 arabic-num">⭐ ${toArabicNum(st.stars)}</td>
+                    <td class="p-3 font-bold text-emerald-700 arabic-num">${toArabicNum(st.mastery || 0)}٪</td>
                     <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${(st.mastery || 0) >= 80 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${(st.mastery || 0) >= 80 ? 'أتقن' : 'قيد التقدم'}</span></td>
                 `;
                 tbody.appendChild(tr);
             });
-            document.getElementById('stat-avg-mastery').innerText = Math.round(totalMastery / studentsDatabase.length) + '٪';
+            document.getElementById('stat-avg-mastery').innerText = toArabicNum(Math.round(totalMastery / studentsDatabase.length)) + '٪';
         }
 
         function exportReportCSV() {
@@ -410,7 +419,7 @@
         }
 
         function resetClassroomData() {
-            if (confirm('هل أنت متأكد من مسح بيانات الطلاب؟')) {
+            if (confirm('هل أنت متأكد من مسح جميع بيانات الطلاب المسجلة؟')) {
                 localStorage.removeItem('abtal_students');
                 studentsDatabase = [];
                 updateTeacherDashboard();
