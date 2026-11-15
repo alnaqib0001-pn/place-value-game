@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDK (للتزامن السحابي اللحظي بين أجهزة الطلاب والمعلم) -->
+    <!-- Firebase SDK (للتزامن السحابي اللحظي) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <!-- Student Login Screen (Name only) -->
+        <!-- Student Login Screen -->
         <div id="student-login-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-10 max-w-md mx-auto border-4 border-emerald-200 text-center">
             <h3 class="text-2xl font-bold text-emerald-700 mb-4">تسجيل دخول الطالب</h3>
             <p class="text-gray-600 mb-6 text-sm">اكتب اسمك الثنائي أو الثلاثي للبدء في رحلة أبطال الجمع</p>
@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        <!-- Teacher Login Screen (Secure PIN) -->
+        <!-- Teacher Login Screen -->
         <div id="teacher-login-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-10 max-w-md mx-auto border-4 border-amber-200 text-center">
             <h3 class="text-2xl font-bold text-amber-700 mb-4">تسجيل دخول المعلم</h3>
             <p class="text-gray-600 mb-6 text-sm">أدخل كلمة المرور السرية الخاصة بلوحة التحكم</p>
@@ -79,9 +79,7 @@
             </div>
 
             <h3 class="text-xl font-bold text-emerald-800 mb-4 text-center">🗺️ خريطة مراحل الفصل الخامس (من ص ١٠٩ إلى ص ١٣٢)</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="stages-grid">
-                <!-- Dynamically populated stages -->
-            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="stages-grid"></div>
         </div>
 
         <!-- Game Active Screen -->
@@ -92,19 +90,13 @@
                 <span id="question-counter" class="text-sm font-semibold text-gray-500 arabic-num">السؤال ١ من ٥</span>
             </div>
             
-            <div id="question-box" class="mb-8">
-                <!-- Question content -->
-            </div>
-
-            <div id="options-box" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto mb-6">
-                <!-- Options buttons -->
-            </div>
-
+            <div id="question-box" class="mb-8"></div>
+            <div id="options-box" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto mb-6"></div>
             <div id="feedback-box" class="text-lg font-bold mb-4"></div>
             <button id="next-question-btn" onclick="nextQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-xl text-lg shadow">السؤال التالي ➡️</button>
         </div>
 
-        <!-- Teacher Dashboard Panel (Real-Time Sync & Persistent Session) -->
+        <!-- Teacher Dashboard Panel -->
         <div id="teacher-dashboard" class="hidden bg-white rounded-2xl shadow-xl p-6 border-4 border-amber-300">
             <div class="flex justify-between items-center mb-6 border-b pb-4">
                 <div>
@@ -158,25 +150,24 @@
                 <button onclick="resetClassroomData()" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-4 py-2.5 rounded-xl text-sm border border-red-200">مسح كافة البيانات السحابية</button>
             </div>
         </div>
-
     </main>
 
-    <!-- Footer -->
     <footer class="bg-emerald-800 text-emerald-200 text-center py-4 text-sm mt-8">
         جميع الحقوق محفوظة © ٢٠٢٦ | تصميم وتنفيذ منصة أبطال الجمع بإشراف المعلم صهيب النقيب
     </footer>
 
-    <!-- JavaScript Application Logic & Firebase Realtime Sync -->
+    <!-- JavaScript Application Logic -->
     <script>
-        // إعدادات الاتصال بالسحابة اللحظية (Firebase Realtime Database)
+        // إعدادات Firebase الخاصة بمشروعك (abtal-aljam3)
         const firebaseConfig = {
-            apiKey: "AIzaSyDummyKeyForAbtalAljam32026",
-            authDomain: "abtal-aljam3-default-rtdb.firebaseapp.com",
+            apiKey: "AIzaSyCLiHVVJ6YXJLziwRTkY9_tZgkJ9PFWkWY",
+            authDomain: "abtal-aljam3.firebaseapp.com",
             databaseURL: "https://abtal-aljam3-default-rtdb.firebaseio.com",
             projectId: "abtal-aljam3",
-            storageBucket: "abtal-aljam3.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456:web:abcdef"
+            storageBucket: "abtal-aljam3.firebasestorage.app",
+            messagingSenderId: "388978434953",
+            appId: "1:388978434953:web:cd4d9b5e7d74d0a8aeb758",
+            measurementId: "G-B65ZRT00RD"
         };
 
         if (!firebase.apps.length) {
@@ -184,7 +175,7 @@
         }
         const db = firebase.database();
 
-        const TEACHER_SECRET_PIN = '9421'; // رمز المعلم السري والمؤمن
+        const TEACHER_SECRET_PIN = '9421';
 
         function toArabicNum(num) {
             const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
@@ -214,7 +205,6 @@
         let activeQuestions = [];
         let studentsDatabase = {};
 
-        // الاستماع للتحديثات السحابية اللحظية تلقائياً دون الحاجة لتحديث الصفحة
         db.ref('students').on('value', (snapshot) => {
             const data = snapshot.val();
             studentsDatabase = data ? data : {};
@@ -223,7 +213,6 @@
             }
         });
 
-        // التحقق من بقاء المعلم مسجلاً للدخول عند تحديث الصفحة
         function checkAutoLogin() {
             if (sessionStorage.getItem('teacher_logged_in') === 'true') {
                 hideAll();
@@ -263,7 +252,7 @@
         function verifyTeacher() {
             const pin = document.getElementById('teacher-pin').value.trim();
             if (pin === TEACHER_SECRET_PIN) {
-                sessionStorage.setItem('teacher_logged_in', 'true'); // تثبيت الجلسة عند التحديث
+                sessionStorage.setItem('teacher_logged_in', 'true');
                 hideAll();
                 document.getElementById('teacher-dashboard').classList.remove('hidden');
                 updateTeacherDashboard();
@@ -287,7 +276,6 @@
             const safeKey = name.replace(/[.#$\/\[\]]/g, "_");
             currentUser = { name, safeKey, stars: 0, currentStage: 1, mastery: 0 };
             
-            // تسجيل دخول الطالب فوراً للسحابة ليرى المعلم انضمامه
             db.ref('students/' + safeKey).set(currentUser);
 
             hideAll();
@@ -409,7 +397,6 @@
             }
             currentUser.mastery = percentage;
             
-            // تحديث تقدم الطالب سحابياً لحظياً
             db.ref('students/' + currentUser.safeKey).set(currentUser);
 
             document.getElementById('game-screen').innerHTML = `
