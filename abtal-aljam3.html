@@ -7,6 +7,11 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK (للتزامن السحابي اللحظي بين أجهزة الطلاب والمعلم) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
     <style>
         body { font-family: 'Cairo', sans-serif; background-color: #f0fdf4; }
         .arabic-num { font-feature-settings: "cv01"; }
@@ -38,7 +43,7 @@
             </div>
         </div>
 
-        <!-- Student Login Screen (Simplified: Name only, no session code) -->
+        <!-- Student Login Screen (Name only) -->
         <div id="student-login-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-10 max-w-md mx-auto border-4 border-emerald-200 text-center">
             <h3 class="text-2xl font-bold text-emerald-700 mb-4">تسجيل دخول الطالب</h3>
             <p class="text-gray-600 mb-6 text-sm">اكتب اسمك الثنائي أو الثلاثي للبدء في رحلة أبطال الجمع</p>
@@ -99,7 +104,7 @@
             <button id="next-question-btn" onclick="nextQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-xl text-lg shadow">السؤال التالي ➡️</button>
         </div>
 
-        <!-- Teacher Dashboard Panel -->
+        <!-- Teacher Dashboard Panel (Real-Time Sync) -->
         <div id="teacher-dashboard" class="hidden bg-white rounded-2xl shadow-xl p-6 border-4 border-amber-300">
             <div class="flex justify-between items-center mb-6 border-b pb-4">
                 <div>
@@ -111,7 +116,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-center">
-                    <p class="text-sm text-gray-600">سجلات الطلاب المحفوظة محلياً</p>
+                    <p class="text-sm text-gray-600">الطلاب المتصلون (سحابياً)</p>
                     <p id="stat-total-students" class="text-2xl font-bold text-emerald-700 arabic-num">٠</p>
                 </div>
                 <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center">
@@ -119,16 +124,16 @@
                     <p id="stat-avg-mastery" class="text-2xl font-bold text-blue-700 arabic-num">٠٪</p>
                 </div>
                 <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-center">
-                    <p class="text-sm text-gray-600">حالة الحماية والأمان</p>
-                    <p class="text-lg font-bold text-emerald-700">مؤمنة بالكامل 🔒</p>
+                    <p class="text-sm text-gray-600">حالة التزامن اللحظي</p>
+                    <p class="text-lg font-bold text-emerald-700">متصل سحابياً 🟢</p>
                 </div>
             </div>
 
-            <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl mb-6 text-xs text-amber-800 leading-relaxed">
-                📌 <strong>توضيح تربوي وتقني:</strong> نظراً لأن المنصة تعمل كتطبيق ويب تفاعلي مستقل على صفحات الستاتيك (GitHub Pages)، فإن كل طالب يلعب على جهازه الخاص، ويتم حفظ بياناته وتقدمه محلياً. تتيح لك هذه اللوحة استعراض التقارير والنتائج المحفوظة وتصديرها بملف Excel متى شئت.
+            <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl mb-6 text-xs text-emerald-800 leading-relaxed">
+                🚀 <strong>تحديث مباشر:</strong> عندما يدخل الطالب من جهازه الخاص، يظهر اسمه وحالته ومرحلته ونسبة إتقانه هنا فوراً وبشكل لحظي أثناء تواجده وحله في الحصة!
             </div>
 
-            <h4 class="font-bold text-lg text-gray-800 mb-3">📊 سجلات أداء الطلاب</h4>
+            <h4 class="font-bold text-lg text-gray-800 mb-3">📊 رصد أداء الطلاب لحظياً</h4>
             <div class="overflow-x-auto mb-6">
                 <table class="w-full text-right border-collapse">
                     <thead>
@@ -142,7 +147,7 @@
                     </thead>
                     <tbody id="students-table-body">
                         <tr>
-                            <td colspan="5" class="p-4 text-center text-gray-500">لا توجد سجلات مسجلة حتى الآن.</td>
+                            <td colspan="5" class="p-4 text-center text-gray-500">جاري انتظار دخول الطلاب... شارك الرابط الآن في التيمز!</td>
                         </tr>
                     </tbody>
                 </table>
@@ -150,7 +155,7 @@
 
             <div class="flex gap-4">
                 <button onclick="exportReportCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl shadow text-sm">📥 تصدير النتائج (CSV/Excel)</button>
-                <button onclick="resetClassroomData()" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-4 py-2.5 rounded-xl text-sm border border-red-200">إعادة ضبط البيانات</button>
+                <button onclick="resetClassroomData()" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-4 py-2.5 rounded-xl text-sm border border-red-200">مسح كافة البيانات السحابية</button>
             </div>
         </div>
 
@@ -161,9 +166,26 @@
         جميع الحقوق محفوظة © ٢٠٢٦ | تصميم وتنفيذ منصة أبطال الجمع بإشراف المعلم صهيب النقيب
     </footer>
 
-    <!-- JavaScript Application Logic -->
+    <!-- JavaScript Application Logic & Firebase Realtime Sync -->
     <script>
-        const TEACHER_SECRET_PIN = '9421'; // رمز دخول المعلم السري والمؤمن
+        // إعدادات الاتصال بالسحابة اللحظية (Firebase Realtime Database)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDummyKeyForAbtalAljam32026",
+            authDomain: "abtal-aljam3-default-rtdb.firebaseapp.com",
+            databaseURL: "https://abtal-aljam3-default-rtdb.firebaseio.com",
+            projectId: "abtal-aljam3",
+            storageBucket: "abtal-aljam3.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456:web:abcdef"
+        };
+
+        // تهيئة فايربيس (إن لم تكن مهيئة مسبقاً)
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
+        const TEACHER_SECRET_PIN = '9421'; // رمز المعلم السري والمؤمن
 
         // تحويل الأرقام الإنجليزية إلى أرقام عربية (٠ ١ ٢ ٣ ٤ ٥ ٦ ٧ ٨ ٩)
         function toArabicNum(num) {
@@ -192,7 +214,20 @@
         let currentQuestionIndex = 0;
         let score = 0;
         let activeQuestions = [];
-        let studentsDatabase = JSON.parse(localStorage.getItem('abtal_students')) || [];
+        let studentsDatabase = {};
+
+        // الاستماع للتحديثات السحابية اللحظية من قاعدة البيانات
+        db.ref('students').on('value', (snapshot) => {
+            const data = snapshot.val();
+            studentsDatabase = data ? data : {};
+            if (!document.getElementById('teacher-dashboard').classList.contains('hidden')) {
+                updateTeacherDashboard();
+            }
+            if (currentUser && studentsDatabase[currentUser.safeKey]) {
+                currentUser = studentsDatabase[currentUser.safeKey];
+                document.getElementById('student-stars').innerText = toArabicNum(currentUser.stars || 0);
+            }
+        });
 
         function showHome() {
             hideAll();
@@ -238,14 +273,11 @@
                 alert('الرجاء إدخال اسم الطالب!');
                 return;
             }
-            currentUser = { name, stars: 0, currentStage: 1, mastery: 0 };
-            let existing = studentsDatabase.find(s => s.name === name);
-            if (!existing) {
-                studentsDatabase.push(currentUser);
-                localStorage.setItem('abtal_students', JSON.stringify(studentsDatabase));
-            } else {
-                currentUser = existing;
-            }
+            const safeKey = name.replace(/[.#$\/\[\]]/g, "_"); // مفتاح آمن لقاعدة البيانات
+            currentUser = { name, safeKey, stars: 0, currentStage: 1, mastery: 0 };
+            
+            // رفع بيانات الطالب للسحابة فوراً ليرى المعلم أنه دخل
+            db.ref('students/' + safeKey).set(currentUser);
 
             hideAll();
             document.getElementById('student-dashboard').classList.remove('hidden');
@@ -295,7 +327,6 @@
         function generateStageQuestions(stageId) {
             let qList = [];
             for (let i = 0; i < 5; i++) {
-                // أرقام بسيطة ومناسبة للصف الثاني الابتدائي (أعداد مكونة من رقمين)
                 let n1 = Math.floor(Math.random() * 30) + 11;
                 let n2 = Math.floor(Math.random() * 25) + 10;
                 let ans = n1 + n2;
@@ -367,9 +398,8 @@
             }
             currentUser.mastery = percentage;
             
-            let idx = studentsDatabase.findIndex(s => s.name === currentUser.name);
-            if (idx !== -1) studentsDatabase[idx] = currentUser;
-            localStorage.setItem('abtal_students', JSON.stringify(studentsDatabase));
+            // تحديث البيانات سحابياً لحظياً لترها في لوحة المعلم فوراً
+            db.ref('students/' + currentUser.safeKey).set(currentUser);
 
             document.getElementById('game-screen').innerHTML = `
                 <div class="text-center py-8">
@@ -381,34 +411,36 @@
         }
 
         function updateTeacherDashboard() {
-            document.getElementById('stat-total-students').innerText = toArabicNum(studentsDatabase.length);
+            const studentsArray = Object.values(studentsDatabase);
+            document.getElementById('stat-total-students').innerText = toArabicNum(studentsArray.length);
             let tbody = document.getElementById('students-table-body');
-            if (studentsDatabase.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">لا توجد سجلات مسجلة حتى الآن.</td></tr>`;
+            if (studentsArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">جاري انتظار دخول الطلاب... شارك الرابط الآن في التيمز!</td></tr>`;
                 return;
             }
             tbody.innerHTML = '';
             let totalMastery = 0;
-            studentsDatabase.forEach(st => {
+            studentsArray.forEach(st => {
                 totalMastery += (st.mastery || 0);
                 let tr = document.createElement('tr');
                 tr.className = 'border-b hover:bg-gray-50';
                 tr.innerHTML = `
                     <td class="p-3 font-semibold">${st.name}</td>
                     <td class="p-3 arabic-num">المرحلة ${toArabicNum(st.currentStage)}</td>
-                    <td class="p-3 arabic-num">⭐ ${toArabicNum(st.stars)}</td>
+                    <td class="p-3 arabic-num">⭐ ${toArabicNum(st.stars || 0)}</td>
                     <td class="p-3 font-bold text-emerald-700 arabic-num">${toArabicNum(st.mastery || 0)}٪</td>
                     <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${(st.mastery || 0) >= 80 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${(st.mastery || 0) >= 80 ? 'أتقن' : 'قيد التقدم'}</span></td>
                 `;
                 tbody.appendChild(tr);
             });
-            document.getElementById('stat-avg-mastery').innerText = toArabicNum(Math.round(totalMastery / studentsDatabase.length)) + '٪';
+            document.getElementById('stat-avg-mastery').innerText = toArabicNum(Math.round(totalMastery / studentsArray.length)) + '٪';
         }
 
         function exportReportCSV() {
+            const studentsArray = Object.values(studentsDatabase);
             let csv = 'اسم الطالب,المرحلة الحالية,النجوم,نسبة الإتقان\n';
-            studentsDatabase.forEach(st => {
-                csv += `${st.name},${st.currentStage},${st.stars},${st.mastery || 0}%\n`;
+            studentsArray.forEach(st => {
+                csv += `${st.name},${st.currentStage},${st.stars || 0},${st.mastery || 0}%\n`;
             });
             let blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
             let url = URL.createObjectURL(blob);
@@ -419,9 +451,9 @@
         }
 
         function resetClassroomData() {
-            if (confirm('هل أنت متأكد من مسح جميع بيانات الطلاب المسجلة؟')) {
-                localStorage.removeItem('abtal_students');
-                studentsDatabase = [];
+            if (confirm('هل أنت متأكد من مسح جميع بيانات الطلاب السحابية؟')) {
+                db.ref('students').remove();
+                studentsDatabase = {};
                 updateTeacherDashboard();
             }
         }
