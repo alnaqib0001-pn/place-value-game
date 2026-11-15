@@ -50,11 +50,11 @@
             </div>
         </div>
 
-        <!-- Teacher Login Screen -->
+        <!-- Teacher Login Screen (Secure & Clean) -->
         <div id="teacher-login-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-10 max-w-md mx-auto border-4 border-amber-200 text-center">
             <h3 class="text-2xl font-bold text-amber-700 mb-4">تسجيل دخول المعلم</h3>
-            <p class="text-gray-600 mb-6 text-sm">أدخل كلمة المرور الخاصة بلوحة التحكم</p>
-            <input type="password" id="teacher-pin" placeholder="كلمة المرور (1234)" class="w-full p-3 mb-6 border-2 border-amber-300 rounded-xl text-center text-lg focus:outline-none focus:border-amber-600">
+            <p class="text-gray-600 mb-6 text-sm">أدخل كلمة المرور الخاصة بلوحة التحكم (خاص بالمعلم فقط)</p>
+            <input type="password" id="teacher-pin" placeholder="أدخل كلمة المرور السرية..." class="w-full p-3 mb-6 border-2 border-amber-300 rounded-xl text-center text-lg focus:outline-none focus:border-amber-600">
             <div class="flex gap-4">
                 <button onclick="verifyTeacher()" class="flex-grow bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl text-lg shadow">فتح لوحة التحكم ⚙️</button>
                 <button onclick="showHome()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold px-4 py-3 rounded-xl">رجوع</button>
@@ -120,8 +120,8 @@
                     <p id="stat-avg-mastery" class="text-2xl font-bold text-blue-700">٠٪</p>
                 </div>
                 <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-center">
-                    <p class="text-sm text-gray-600">رمز الجلسة النشط</p>
-                    <p class="text-2xl font-bold text-amber-700 arabic-num">١٢٣٤</p>
+                    <p class="text-sm text-gray-600">حالة الحماية</p>
+                    <p class="text-lg font-bold text-emerald-700">مؤمنة بالكامل 🔒</p>
                 </div>
             </div>
 
@@ -160,6 +160,9 @@
 
     <!-- JavaScript Application Logic -->
     <script>
+        // الرقم السري الجديد الخاص بك (يمكنك تغييره هنا مستقبلاً بين علامتي التنصيص)
+        const TEACHER_SECRET_PIN = '9421';
+
         const stagesData = [
             { id: 1, title: "١. التهيئة (ص١٠٩)", desc: "مراجعة الجمع الأساسية", unlocked: true },
             { id: 2, title: "٢. جمع العشرات (ص١١٠)", desc: "جمع مضفات العشرة بدقة", unlocked: false },
@@ -195,6 +198,7 @@
 
         function showTeacherLogin() {
             hideAll();
+            document.getElementById('teacher-pin').value = ''; // تنظيف الحقل أماناً
             document.getElementById('teacher-login-screen').classList.remove('hidden');
         }
 
@@ -208,13 +212,14 @@
         }
 
         function verifyTeacher() {
-            const pin = document.getElementById('teacher-pin').value;
-            if (pin === '1234') {
+            const pin = document.getElementById('teacher-pin').value.trim();
+            if (pin === TEACHER_SECRET_PIN) {
                 hideAll();
                 document.getElementById('teacher-dashboard').classList.remove('hidden');
                 updateTeacherDashboard();
             } else {
-                alert('كلمة المرور غير صحيحة. كلمة المرور الافتراضية هي: 1234');
+                alert('كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.');
+                document.getElementById('teacher-pin').value = '';
             }
         }
 
