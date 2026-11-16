@@ -34,7 +34,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-lg mx-auto">
                 <button onclick="showStudentLogin()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold p-6 rounded-xl shadow-lg text-xl transition transform hover:scale-105 flex flex-col items-center justify-center gap-3">
                     <span class="text-4xl">🎒</span>
-                    <span>دخول الطلاب (لعب وتحدي)</span>
+                    <span>دخول الطلاب (لعب والتحدي)</span>
                 </button>
                 <button onclick="showTeacherLogin()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold p-6 rounded-xl shadow-lg text-xl transition transform hover:scale-105 flex flex-col items-center justify-center gap-3">
                     <span class="text-4xl">👨‍🏫</span>
@@ -332,15 +332,49 @@
         function generateStageQuestions(stageId) {
             let qList = [];
             for (let i = 0; i < 5; i++) {
-                let n1 = Math.floor(Math.random() * 30) + 11;
-                let n2 = Math.floor(Math.random() * 25) + 10;
-                let ans = n1 + n2;
+                let n1, n2, ans, qText;
                 
+                if (stageId === 2) {
+                    // جمع العشرات (مضاعفات العشرة)
+                    n1 = (Math.floor(Math.random() * 7) + 1) * 10;
+                    n2 = (Math.floor(Math.random() * 7) + 1) * 10;
+                    ans = n1 + n2;
+                    qText = `ما ناتج جمع العشرات: ${toArabicNum(n1)} + ${toArabicNum(n2)} ؟`;
+                } else if (stageId === 3) {
+                    // العد التصاعدي
+                    n1 = Math.floor(Math.random() * 40) + 20;
+                    n2 = Math.floor(Math.random() * 4) + 1;
+                    ans = n1 + n2;
+                    qText = `استعمل العد التصاعدي لإيجاد الناتج: ${toArabicNum(n1)} + ${toArabicNum(n2)} ؟`;
+                } else if (stageId === 5 || stageId === 8) {
+                    // جمع عدد من رقمين إلى رقم أو رقمين
+                    n1 = Math.floor(Math.random() * 50) + 15;
+                    n2 = Math.floor(Math.random() * 40) + 10;
+                    ans = n1 + n2;
+                    qText = `أوجد ناتج الجمع الآتي: ${toArabicNum(n1)} + ${toArabicNum(n2)} ؟`;
+                } else if (stageId === 10) {
+                    // تقدير ناتج الجمع
+                    n1 = Math.floor(Math.random() * 70) + 12;
+                    n2 = Math.floor(Math.random() * 70) + 12;
+                    ans = Math.round(n1 / 10) * 10 + Math.round(n2 / 10) * 10;
+                    qText = `قدر ناتج الجمع (بالتقريب لأقرب عشرة): ${toArabicNum(n1)} + ${toArabicNum(n2)} ؟`;
+                } else {
+                    // المراحل العامة
+                    n1 = Math.floor(Math.random() * 30) + 11;
+                    n2 = Math.floor(Math.random() * 25) + 10;
+                    ans = n1 + n2;
+                    qText = `ما هو ناتج الجمع الآتي: ${toArabicNum(n1)} + ${toArabicNum(n2)} ؟`;
+                }
+
                 let opts = [ans, ans + 2, ans - 1 > 0 ? ans - 1 : ans + 3, ans + 4];
+                opts = [...new Set(opts)];
+                while(opts.length < 4) {
+                    opts.push(ans + opts.length + 5);
+                }
                 opts.sort(() => Math.random() - 0.5);
 
                 qList.push({
-                    question: `ما هو ناتج الجمع الآتي: ${toArabicNum(n1)} + ${toArabicNum(n2)} ؟`,
+                    question: qText,
                     options: opts,
                     correct: ans
                 });
@@ -392,12 +426,15 @@
         function finishStage() {
             let percentage = (score / 5) * 100;
             let feedbackMsg = "";
+            let canProceed = false;
+
             if (percentage >= 80) {
-                feedbackMsg = `🌟 مبروك! حققت نسبة إتقان ${toArabicNum(percentage)}٪. تم فتح المرحلة التالية!`;
+                feedbackMsg = `🌟 مبروك! حققت نسبة إتقان ${toArabicNum(percentage)}٪. تم فتح المرحلة التالية بنجاح!`;
                 currentUser.stars = (currentUser.stars || 0) + 10;
                 if (currentUser.currentStage <= currentStageId && currentUser.currentStage < 13) {
-                    currentUser.currentStage++;
+                    currentUser.currentStage = currentStageId + 1;
                 }
+                canProceed = true;
             } else {
                 feedbackMsg = `⚠️ نسبة الإتقان ${toArabicNum(percentage)}٪. تحتاج إلى ٨٠٪ على الأقل لاجتياز المرحلة. حاول مرة أخرى!`;
             }
@@ -405,11 +442,18 @@
             
             db.ref('students/' + currentUser.safeKey).set(currentUser);
 
+            let actionButtons = `
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+                    ${canProceed && currentStageId < 13 ? `<button onclick="startStage(${currentStageId + 1})" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-lg shadow transition transform hover:scale-105">انتقل للمرحلة التالية فوراً 🚀</button>` : ''}
+                    <button onclick="backToMap()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-6 py-3 rounded-xl text-lg shadow">العودة لخريطة المراحل 🗺️</button>
+                </div>
+            `;
+
             document.getElementById('game-screen').innerHTML = `
                 <div class="text-center py-8">
                     <h3 class="text-3xl font-bold text-emerald-700 mb-4">انتهت المرحلة!</h3>
                     <p class="text-xl mb-6 text-gray-700 arabic-num">${feedbackMsg}</p>
-                    <button onclick="backToMap()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-lg shadow">العودة لخريطة المراحل 🗺️</button>
+                    ${actionButtons}
                 </div>
             `;
         }
@@ -454,13 +498,17 @@
             a.click();
         }
 
-        function resetClassroomData() {
-            if (confirm('هل أنت متأكد من مسح جميع بيانات الطلاب السحابية؟')) {
-                db.ref('students').remove();
-                studentsDatabase = {};
-                updateTeacherDashboard();
-            }
-        }
+        (function() {
+            window.resetClassroomData = function() {
+                if (confirm('هل أنت متأكد من مسح جميع بيانات الطلاب السحابية؟')) {
+                    db.ref('students').remove().then(() => {
+                        studentsDatabase = {};
+                        updateTeacherDashboard();
+                        alert('تم مسح كافة البيانات بنجاح.');
+                    });
+                }
+            };
+        })();
     </script>
 </body>
 </html>
