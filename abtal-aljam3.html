@@ -158,7 +158,6 @@
 
     <!-- JavaScript Application Logic -->
     <script>
-        // إعدادات Firebase الخاصة بمشروعك (abtal-aljam3)
         const firebaseConfig = {
             apiKey: "AIzaSyCLiHVVJ6YXJLziwRTkY9_tZgkJ9PFWkWY",
             authDomain: "abtal-aljam3.firebaseapp.com",
@@ -274,22 +273,28 @@
                 return;
             }
             const safeKey = name.replace(/[.#$\/\[\]]/g, "_");
-            currentUser = { name, safeKey, stars: 0, currentStage: 1, mastery: 0 };
             
-            db.ref('students/' + safeKey).set(currentUser);
+            db.ref('students/' + safeKey).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    currentUser = snapshot.val();
+                } else {
+                    currentUser = { name, safeKey, stars: 0, currentStage: 1, mastery: 0 };
+                    db.ref('students/' + safeKey).set(currentUser);
+                }
 
-            hideAll();
-            document.getElementById('student-dashboard').classList.remove('hidden');
-            document.getElementById('welcome-student-name').innerText = `مرحباً بالبطل: ${currentUser.name}`;
-            document.getElementById('student-stars').innerText = toArabicNum(currentUser.stars);
-            renderStagesMap();
+                hideAll();
+                document.getElementById('student-dashboard').classList.remove('hidden');
+                document.getElementById('welcome-student-name').innerText = `مرحباً بالبطل: ${currentUser.name}`;
+                document.getElementById('student-stars').innerText = toArabicNum(currentUser.stars || 0);
+                renderStagesMap();
+            });
         }
 
         function renderStagesMap() {
             const grid = document.getElementById('stages-grid');
             grid.innerHTML = '';
             stagesData.forEach(stage => {
-                const isUnlocked = stage.id <= currentUser.currentStage;
+                const isUnlocked = stage.id <= (currentUser.currentStage || 1);
                 const card = document.createElement('div');
                 card.className = `p-4 rounded-xl border-2 transition text-center flex flex-col justify-between ${isUnlocked ? 'bg-emerald-50 border-emerald-300 cursor-pointer hover:bg-emerald-100' : 'bg-gray-100 border-gray-300 opacity-60 cursor-not-allowed'}`;
                 card.innerHTML = `
@@ -320,6 +325,7 @@
         function backToMap() {
             hideAll();
             document.getElementById('student-dashboard').classList.remove('hidden');
+            document.getElementById('student-stars').innerText = toArabicNum(currentUser.stars || 0);
             renderStagesMap();
         }
 
@@ -388,7 +394,7 @@
             let feedbackMsg = "";
             if (percentage >= 80) {
                 feedbackMsg = `🌟 مبروك! حققت نسبة إتقان ${toArabicNum(percentage)}٪. تم فتح المرحلة التالية!`;
-                currentUser.stars += 10;
+                currentUser.stars = (currentUser.stars || 0) + 10;
                 if (currentUser.currentStage <= currentStageId && currentUser.currentStage < 13) {
                     currentUser.currentStage++;
                 }
@@ -403,7 +409,7 @@
                 <div class="text-center py-8">
                     <h3 class="text-3xl font-bold text-emerald-700 mb-4">انتهت المرحلة!</h3>
                     <p class="text-xl mb-6 text-gray-700 arabic-num">${feedbackMsg}</p>
-                    <button onclick="startStudentJourney()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-lg shadow">العودة لخريطة المراحل 🗺️</button>
+                    <button onclick="backToMap()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-lg shadow">العودة لخريطة المراحل 🗺️</button>
                 </div>
             `;
         }
@@ -424,7 +430,7 @@
                 tr.className = 'border-b hover:bg-gray-50';
                 tr.innerHTML = `
                     <td class="p-3 font-semibold">${st.name}</td>
-                    <td class="p-3 arabic-num">المرحلة ${toArabicNum(st.currentStage)}</td>
+                    <td class="p-3 arabic-num">المرحلة ${toArabicNum(st.currentStage || 1)}</td>
                     <td class="p-3 arabic-num">⭐ ${toArabicNum(st.stars || 0)}</td>
                     <td class="p-3 font-bold text-emerald-700 arabic-num">${toArabicNum(st.mastery || 0)}٪</td>
                     <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${(st.mastery || 0) >= 80 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${(st.mastery || 0) >= 80 ? 'أتقن' : 'قيد التقدم'}</span></td>
@@ -438,7 +444,7 @@
             const studentsArray = Object.values(studentsDatabase);
             let csv = 'اسم الطالب,المرحلة الحالية,النجوم,نسبة الإتقان\n';
             studentsArray.forEach(st => {
-                csv += `${st.name},${st.currentStage},${st.stars || 0},${st.mastery || 0}%\n`;
+                csv += `${st.name},${st.currentStage || 1},${st.stars || 0},${st.mastery || 0}%\n`;
             });
             let blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
             let url = URL.createObjectURL(blob);
